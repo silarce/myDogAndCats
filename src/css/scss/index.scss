@@ -1,0 +1,39 @@
+@font-face {
+    font-family: NotoSans;
+    src: url(./fontFamily/NotoSansTC-Regular.otf);
+    unicode-range: U+4E00-9FFF;
+  }
+
+* {
+    box-sizing: border-box;
+    font-family: NotoSans;
+}
+body {
+    background-color: #000;
+    // margin: 0;
+    // padding:0;
+}
+#root {
+    // border:1px solid transparent; //用來處理margin collapse 的問題
+    // padding: 0;
+    // margin: 0;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden; // 用來隱藏滾動條
+}
+
+.pageBookmark {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.test {
+    overflow: visible;
+      transform: scale(50, 50) translate();
+      color:#ffd381;
+      color:#ffd890;
+      color:#ffe0a5;
+    vertical-align: middle;
+    object-fit: cover;
+}

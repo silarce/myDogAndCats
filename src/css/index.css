@@ -1,0 +1,34 @@
+@font-face {
+  font-family: NotoSans;
+  src: url(./fontFamily/NotoSansTC-Regular.otf);
+  unicode-range: U+4E00-9FFF;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-family: NotoSans;
+}
+
+body {
+  background-color: #000;
+}
+
+#root {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.pageBookmark {
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.test {
+  overflow: visible;
+  -webkit-transform: scale(50, 50) translate();
+          transform: scale(50, 50) translate();
+}
+/*# sourceMappingURL=index.css.map */
