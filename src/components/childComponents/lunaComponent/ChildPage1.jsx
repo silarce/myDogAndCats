@@ -33,24 +33,22 @@ padding:0;
 font-size:4vh;
 `
 const TheImage = styled.img`
-height:68vh;
-width:68vh;
+width:33vw;
+height:33vw;
+max-height:68vh;
 border-radius:30px;
 display:inline-block;
 vertical-align: middle;
 object-fit:cover;
 `
-// height:72vh;
 
 const TheDt = styled.dt`
 font-size:4vh;
 `
-// font-size:1.4rem;
 const TheDd = styled.dd`
 font-size:3vh;
 margin-bottom:0.3rem;
 `
-// font-size:1.2rem;
 
 function ChildPage1({ backgroundColor, childPage1Top ,pageTransition }) {
 

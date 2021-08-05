@@ -55,7 +55,7 @@ function ChildPage2({ backgroundColor, childPage2Top, pageTransition }) {
         <>
             <Container backgroundColor={backgroundColor} childPage2Top={childPage2Top} pageTransition={pageTransition}>
                 <SubContainer>
-                    <Title>基本資料</Title>
+                    <Title>生平事蹟</Title>
                     <hr />
                     <TheImage src={minaPaw} alt="MINA的照片"></TheImage>
                     <TheSpan>事蹟一</TheSpan>

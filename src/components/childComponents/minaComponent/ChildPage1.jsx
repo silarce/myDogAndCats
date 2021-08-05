@@ -33,8 +33,9 @@ padding:0;
 font-size:4vh;
 `
 const TheImage = styled.img`
-height:68vh;
-width:68vh;
+width:33vw;
+height:33vw;
+max-height:68vh;
 border-radius:30px;
 display:inline-block;
 vertical-align: middle;

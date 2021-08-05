@@ -1,6 +1,26 @@
+重要:
+transition會影響z-index的變換速度,怎麼影響的還不知道
+
+
 
 emotion的rwd的語法
 https://emotion.sh/docs/media-queries
 
 為了開發方便而需要調整的檔案
 App.js  Page.jsx  Pagexxxx.jsx
+
+
+似乎會讓emotion styled發生BUG的CSS
+過陣子新開一個專案測試看看
+const Container = styled.div`
+width:100%;
+height:100%;
+padding:0 20vw 0 20vw;
+position:absolute;
+bottom:0;
+z-index:6;
+background-color:${({ staticCss }) => staticCss.backgroundColor};
+transition:1s;
+overflow:hidden;
+`
+

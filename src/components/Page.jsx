@@ -29,7 +29,10 @@ bottom:-${props => props.bookmarkHeight}vw;
 border-radius: 0 0 50% 50%;
 text-align:center;
 transition:0.5s;
-color:${(props) => { return props.bookmarkHeight === 3 ? "black" : "white" }}
+&:hover{
+    color:white;
+}
+font-size:3vw;
 `
 
 function Page({ bookmarkName, pageZIndex, setPageZIndex, pageDeploy, backgroundColor }) {
@@ -83,7 +86,7 @@ function Page({ bookmarkName, pageZIndex, setPageZIndex, pageDeploy, backgroundC
             <Container stateList={stateList} backgroundColor={backgroundColor}>
                 <Suspense fallback={<div>讀取中</div>}>
                     {bookmarkName === "mina" && (<PageMina pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
-                    {bookmarkName === "wolfy" && (<PageWolfy />)}
+                    {bookmarkName === "wolfy" && (<PageWolfy pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
                     {bookmarkName === "luna" && (<PageLuna pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
                 </Suspense>
                 <PageBookmark

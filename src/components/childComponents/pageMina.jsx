@@ -24,8 +24,12 @@ const HeroImage = styled.div`
 width: 100vw;
 height: 100vh;
 
-background-image: linear-gradient(
-90deg, rgba(255,255,255,0) 0%,  rgba(255,255,255,0.3) 50%, rgba(240,240,240,1) 75%, rgba(240,240,240,1) 100%),
+background-image: 
+linear-gradient(
+90deg, rgba(255,255,255,0) 0%,
+rgba(255,255,255,0.3) 50%,
+rgba(240,240,240,1) 75%,
+rgba(240,240,240,1) 100%),
 url(${mina_4_2});
 
 background-repeat: no-repeat;
@@ -35,7 +39,7 @@ background-position-x: ${({ heroPositionX }) => heroPositionX}% ;
 
 const TheName = styled.h1`
 position:absolute;
-font-size:5rem;
+font-size:6vw;
 left:71%;
 top:10%;
 transition:2s;
@@ -43,9 +47,9 @@ display:${({ theNameCss }) => theNameCss.display};
 opacity:${({ theNameCss }) => theNameCss.opacity};
 `
 const Link = styled.div`
-font-size:2rem;
-padding:1rem;
-margin: 1.5rem 1rem 1.5rem 5rem;
+font-size:2.5vw;
+padding:0.8vw;
+margin: 1.5vh 1vw 1.5vh 6vw;
 cursor:pointer;
 border-radius:10px;
 transition:0.5s;
@@ -89,7 +93,7 @@ background-color:black;
 const Link2Container = styled.div`
 background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
 width:100%;
-height:28vh;
+height:14vw;
 margin:auto;
 transition:1s;
 display:${({ Link2ContainerDisplay }) => Link2ContainerDisplay};
@@ -100,10 +104,10 @@ opacity:${({ Link2ContainerOpacity }) => Link2ContainerOpacity};
 // 導覽列裡的按鈕
 const Link2 = styled.div`
 text-align:center;
-margin: -30px auto 35px auto;
+margin: -1.8vw auto 2.3vw auto;
 width:15vw;
-font-size:2rem;
-padding:0.5rem;
+font-size:2.8vw;
+padding:0.5vw;
 cursor:pointer;
 border-radius:10px;
 transition:1s;
@@ -119,7 +123,7 @@ text-align: center;
 margin-top: -13px;
 position:relative;
 transition:1s;
-top:${({ arrowContainerTop }) => arrowContainerTop}%;
+top:${({ arrowContainerTop }) => arrowContainerTop}vw;
 `
 const DownArrow = styled(ArrowIosDownward)`
 width:1vw;
@@ -202,7 +206,7 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         setTitleCursor("pointer")
         setTimeout(() => {
             setNavOpacity(1);
-            setArrowContainerTop(60);
+            setArrowContainerTop(13.3);
             setLink2ContainerDisplay("block");
             setTimeout(() => {
                 setLink2ContainerOpacity(1);

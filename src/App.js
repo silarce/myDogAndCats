@@ -22,7 +22,7 @@ function App() {
       <SlideShow />    
         <Page bookmarkName="mina" pageZIndex={pageZIndex.mina} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="#fde6ea" />
         <Page bookmarkName="gallery" pageZIndex={pageZIndex.gallery} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="green" />
-        <Page bookmarkName="wolfy" pageZIndex={pageZIndex.wolfy} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="gray" />
+        <Page bookmarkName="wolfy" pageZIndex={pageZIndex.wolfy} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="rgb(200, 200, 200)" />
         <Page bookmarkName="show" pageZIndex={pageZIndex.show} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="blue" />
         <Page bookmarkName="luna" pageZIndex={pageZIndex.luna} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="#ffd890" />
  

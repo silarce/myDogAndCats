@@ -52,12 +52,12 @@ font-size:3vh;
 
 function ChildPage2({ backgroundColor, childPage2Top, pageTransition }) {
 
-
+// 因為需要調整圖片的顯示範圍與位置，因此這邊的肉球照片改用div設背景圖片的方式來做
     return (
         <>
             <Container backgroundColor={backgroundColor} childPage2Top={childPage2Top} pageTransition={pageTransition}>
                 <SubContainer>
-                    <Title>基本資料</Title>
+                    <Title>生平事蹟</Title>
                     <hr />
                     <TheImage></TheImage>
                     <TheSpan>事蹟一</TheSpan>
@@ -65,13 +65,11 @@ function ChildPage2({ backgroundColor, childPage2Top, pageTransition }) {
                     <hr />
                     <br />
                     <TheImage></TheImage>
-                    {/* <TheImage src={lunaPaw} alt="LUNA的照片"></TheImage> */}
                     <TheSpan>事蹟二</TheSpan>
                     <TheP>到了8歲了還是會尿床，害奴隸這八年來一起床就要把床墊收起來</TheP>
                     <hr />
                     <br />
                     <TheImage></TheImage>
-                    {/* <TheImage src={lunaPaw} alt="LUNA的照片"></TheImage> */}
                     <TheSpan>事蹟三</TheSpan>
                     <TheP>9歲後終於不再尿床了，奴隸終於能安心睡覺也不用再收床墊了</TheP>
                     <hr />
