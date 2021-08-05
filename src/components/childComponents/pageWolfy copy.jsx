@@ -1,6 +1,6 @@
 
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 
@@ -106,13 +106,13 @@ animation-timing-function:linear;
 transform:translateX(${({ theLocation }) => theLocation === "left" ? -50 : 50}%);
 `
 const TheNav = styled.div`
-width:${({ shouldNavExpand }) => shouldNavExpand ? 45 : 20}vw;
-height:${({ shouldNavExpand }) => shouldNavExpand ? 22 : 10}vh;
+width:${({shouldNavExpand})=> shouldNavExpand? 45:20}vw;
+height:${({shouldNavExpand})=> shouldNavExpand?  22:10}vh;
 position:absolute;
 left:50%;
 transform:translateX(-50%);
-background: ${({ heroImageZIndex }) => heroImageZIndex === 1 ? "rgba( 255,255,255, 0.6 )" : "rgba( 150,150,150, 0.6 )"};
-color:${({ heroImageZIndex }) => heroImageZIndex === 1 ? "black" : "white"};
+background: ${({heroImageZIndex})=> heroImageZIndex===1? "rgba( 255,255,255, 0.6 )":"rgba( 150,150,150, 0.6 )"};
+color:${({heroImageZIndex})=> heroImageZIndex===1? "black":"white"};
 box-shadow: 0px 0px 1vw 1vw rgba(200,200,200,0.4);
 backdrop-filter: blur( 10.0px );
 border-radius: 0px 0px 20px 20px;
@@ -220,98 +220,9 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
     // ---------------------------------------
     let pageTransition = 2;// 頁面移動的時長，單位為秒
     // ---------------------------------------
-    // Container用的不會變動的css
     const staticCss = {
         backgroundColor: backgroundColor,
         pageTransition: pageTransition
-    }
-    // ------------------------------------------------------------------------
-    // 部屬childPage
-    // 部屬childPage
-    // 部屬childPage
-
-    // 根據blurLightMove與childPage1ZIndex的狀態決定是否執行
-    const deployChildPage1 = () => {
-        if (blurLightMove || childPage1ZIndex === 1) return;
-        setBlurLightMove(true)
-        setChildPage1ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
-        wheelSwitchCount = 1; //改變滑鼠滾輪翻頁的順序
-        shouldNavExpand = false;
-        setTimeout(() => { //動畫結束後做下列動作
-            setBlurLightMove(false)
-            setHeroImageZIndex(0); // 反佈署heroImage
-            setChildPage1ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
-            setChildPage2ZIndex(0);// z-index設為0，反佈署
-            setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
-    }
-
-    const deployChildPage2 = () => {
-        if (blurLightMove || childPage2ZIndex === 1) return;
-        setBlurLightMove(true)
-        setChildPage2ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
-        wheelSwitchCount = 2; //改變滑鼠滾輪翻頁的順序
-        shouldNavExpand = false;
-        setTimeout(() => { //動畫結束後做下列動作
-            setBlurLightMove(false)
-            setHeroImageZIndex(0); // 反佈署heroImage
-            setChildPage2ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
-            setChildPage1ZIndex(0);// z-index設為0，反佈署
-            setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
-    }
-
-    const deployChildPage3 = () => {
-        if (blurLightMove || childPage3ZIndex === 1) return;
-        setBlurLightMove(true)
-        setChildPage3ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
-        wheelSwitchCount = 3; //改變滑鼠滾輪翻頁的順序
-        shouldNavExpand = false;
-        setTimeout(() => { //動畫結束後做下列動作
-            setBlurLightMove(false)
-            setHeroImageZIndex(0); // 反佈署heroImage
-            setChildPage3ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
-            setChildPage1ZIndex(0);// z-index設為0，反佈署
-            setChildPage2ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
-    }
-    // ------------------------------------------------------------------------
-    // 將所有childPage反部屬，並回到heroImage
-    // 將所有childPage反部屬，並回到heroImage
-    // 將所有childPage反部屬，並回到heroImage
-    const undeployChildPages = useCallback(() => {
-        if (blurLightMove || heroImageZIndex === 2 || heroImageZIndex === 1) return;
-        setBlurLightMove(true);
-        setHeroImageZIndex(2);
-        wheelSwitchCount = 0; //改變滑鼠滾輪翻頁的順序
-        setTimeout(() => { //動畫結束後做下列動作
-            setBlurLightMove(false)
-            setHeroImageZIndex(1);
-            shouldNavExpand = true;
-            setChildPage1ZIndex(0);// z-index設為0，反佈署
-            setChildPage2ZIndex(0);// z-index設為0，反佈署
-            setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
-    }, [blurLightMove, heroImageZIndex, pageTransition])
-
-    // --------------------------------------------
-    // 滾動滑鼠滾輪移動頁面
-    const changePage = (e) => {
-        if (!wheelSwitch) return
-        if (e.deltaY > 0 && wheelSwitchCount < 3) {
-            wheelSwitchCount++
-        } else if (e.deltaY < 0 && wheelSwitchCount > 0) {
-            wheelSwitchCount--
-        }
-
-        wheelSwitchCount === 0 ? undeployChildPages() :
-            wheelSwitchCount === 1 ? deployChildPage1() :
-                wheelSwitchCount === 2 ? deployChildPage2() : deployChildPage3()
-        wheelSwitch = false;
-        setTimeout(() => {
-            wheelSwitch = true
-        }, pageTransition * 1000)
-
     }
     // ------------------------------------------------------------------------
     // 根據pageZIndex改變TheNav的透明度或反部屬
@@ -339,10 +250,98 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
             undeployChildPages(); //當pageWolfy反佈署後，反佈署heroImage
             setBlurLightMove(false); // 切換BlurLightMove的開關，使其可移動
         }
-    }, [pageZIndex, undeployChildPages]);
+    }, [pageZIndex]);
+    // ------------------------------------------------------------------------
+    // 部屬childPage
+    // 部屬childPage
+    // 部屬childPage
+
+    // 根據blurLightMove與childPage1ZIndex的狀態決定是否執行
+    const deployChildPage1 = () => {
+        if (blurLightMove || childPage1ZIndex === 1) return;
+        setBlurLightMove(true)
+        setChildPage1ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
+        wheelSwitchCount=1; //改變滑鼠滾輪翻頁的順序
+        shouldNavExpand=false;
+        setTimeout(() => { //動畫結束後做下列動作
+            setBlurLightMove(false)
+            setHeroImageZIndex(0); // 反佈署heroImage
+            setChildPage1ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
+            setChildPage2ZIndex(0);// z-index設為0，反佈署
+            setChildPage3ZIndex(0);// z-index設為0，反佈署
+        }, pageTransition * 1000);
+    }
+
+    const deployChildPage2 = () => {
+        if (blurLightMove || childPage2ZIndex === 1) return;
+        setBlurLightMove(true)
+        setChildPage2ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
+        wheelSwitchCount=2; //改變滑鼠滾輪翻頁的順序
+        shouldNavExpand=false;
+        setTimeout(() => { //動畫結束後做下列動作
+            setBlurLightMove(false)
+            setHeroImageZIndex(0); // 反佈署heroImage
+            setChildPage2ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
+            setChildPage1ZIndex(0);// z-index設為0，反佈署
+            setChildPage3ZIndex(0);// z-index設為0，反佈署
+        }, pageTransition * 1000);
+    }
+
+    const deployChildPage3 = () => {
+        if (blurLightMove || childPage3ZIndex === 1) return;
+        setBlurLightMove(true)
+        setChildPage3ZIndex(2) //使該page在最上層，好蓋掉原本佈署的page
+        wheelSwitchCount=3; //改變滑鼠滾輪翻頁的順序
+        shouldNavExpand=false;
+        setTimeout(() => { //動畫結束後做下列動作
+            setBlurLightMove(false)
+            setHeroImageZIndex(0); // 反佈署heroImage
+            setChildPage3ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
+            setChildPage1ZIndex(0);// z-index設為0，反佈署
+            setChildPage2ZIndex(0);// z-index設為0，反佈署
+        }, pageTransition * 1000);
+    }
+    // ------------------------------------------------------------------------
+    // 將所有childPage反部屬，並回到heroImage
+    // 將所有childPage反部屬，並回到heroImage
+    // 將所有childPage反部屬，並回到heroImage
+    const undeployChildPages = () => {
+        if (blurLightMove || heroImageZIndex === 2 || heroImageZIndex === 1) return;
+        setBlurLightMove(true);
+        setHeroImageZIndex(2);
+        wheelSwitchCount=0; //改變滑鼠滾輪翻頁的順序
+        setTimeout(() => { //動畫結束後做下列動作
+            setBlurLightMove(false)
+            setHeroImageZIndex(1);
+            shouldNavExpand=true;
+            setChildPage1ZIndex(0);// z-index設為0，反佈署
+            setChildPage2ZIndex(0);// z-index設為0，反佈署
+            setChildPage3ZIndex(0);// z-index設為0，反佈署
+        }, pageTransition * 1000);
+    }
+
+    // --------------------------------------------
+    // 滾動滑鼠滾輪移動頁面
+    const changePage = (e) => {
+        if (!wheelSwitch) return
+        if (e.deltaY > 0 && wheelSwitchCount < 3) {
+            wheelSwitchCount++
+        } else if (e.deltaY < 0 && wheelSwitchCount > 0) {
+            wheelSwitchCount--
+        }
+
+        wheelSwitchCount === 0 ? undeployChildPages() :
+            wheelSwitchCount === 1 ? deployChildPage1() :
+                wheelSwitchCount === 2 ? deployChildPage2() : deployChildPage3()
+        wheelSwitch = false;
+        setTimeout(() => {
+            wheelSwitch = true
+        }, pageTransition*1000)
+
+    }
     // -------------------------------------------------
-    // -------------------------------------------------
-    // -------------------------------------------------
+
+
     return (
         <>
             <Container onWheel={changePage}>
@@ -355,7 +354,7 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
                 </HeroImageContainer>
 
                 <TheNav theNavCss={theNavCss} heroImageZIndex={heroImageZIndex} blurLightMove={blurLightMove} shouldNavExpand={shouldNavExpand}>
-                    <WolfyName onClick={() => { undeployChildPages(); shouldNavExpand = true; }}>WOLFY</WolfyName>
+                    <WolfyName onClick={()=>{undeployChildPages();shouldNavExpand=true;}}>WOLFY</WolfyName>
                     <br />
                     <LinkBox>
                         <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>

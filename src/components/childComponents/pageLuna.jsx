@@ -330,7 +330,7 @@ function PageLuna({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
                 </HeroImage>
                 <ChildPage1 backgroundColor={backgroundColor} childPage1Top={childPage1Top} pageTransition={pageTransition} />
                 <ChildPage2 backgroundColor={backgroundColor} childPage2Top={childPage2Top} pageTransition={pageTransition} />
-                <ChildPage3 backgroundColor={backgroundColor} childPage3Top={childPage3Top} pageTransition={pageTransition} />
+                <ChildPage3 backgroundColor={backgroundColor} childPage3Top={childPage3Top} pageTransition={pageTransition} pageZIndex={pageZIndex} />
             </Container>
         </>
     )

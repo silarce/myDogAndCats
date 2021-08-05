@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import styled from "@emotion/styled";
 
 import mina1 from "../../../img/Mina_img/Mina_1.jpg";
@@ -20,17 +20,15 @@ background-color:${({ backgroundColor }) => backgroundColor};
 transition:${({pageTransition})=>pageTransition}s;
 `
 const SubContainer = styled.div`
-position:absolute;
-top:0;
-bottom:0;
-right:0;
-left:0;
-margin:auto;
 width:60vw;
 height:80vh;
-background-color:#f9f9f9;
-border-radius:30px;
+position:absolute;
+top:52%;
+left:50%;
+transform:translate(-50%,-50%);
 padding:2vw;
+border-radius:30px;
+background-color:#f9f9f9;
 `
 const Title = styled.p`
 margin:0;
@@ -44,10 +42,20 @@ grid-template-columns: auto auto;
 justify-content:space-evenly ;
 grid-gap: 1vh;
 `
+
 const Photo = styled.img`
-width:20vw;
+width:27vw;
+height:16vw;
+object-fit:contain;
 cursor:pointer;
+border-radius:30px;
+background-color:black
 `
+// 先留著，以後可能要改回來
+// const Photo = styled.img`
+// width:20vw;
+// cursor:pointer;
+// `
 // ----------------------------------------
 // 跑馬燈
 const PhotoCarousel = styled.div`
@@ -111,7 +119,7 @@ opacity:${({ iconopacity }) => iconopacity};
 // ----------------------------------------
 let photoIndex = 0;
 // ----------------------------------------
-function ChildPage3({ backgroundColor, childPage3Top,pageTransition }) {
+function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex }) {
 
     const [photoCarouselCss, setPhotoCarouselCss] = useState({ // 照片跑馬燈的state
         top: 0,
@@ -142,7 +150,7 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition }) {
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    top: `50%`,
+                    top: `52%`,
                     left: `50%`,
                     width: `60vw`,
                     height: `80vh`,
@@ -154,7 +162,7 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition }) {
         setTimeout(() => {
             setIconOpacity(1);
         }, 1000);
-    }
+    } //deployPhotoCarousel
     // 反部屬跑馬燈
     const undeployPhotoCarousel = () => {
         setPhotoCarouselCss((preState) => {
@@ -203,6 +211,11 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition }) {
             setThePhotoInCarousel(photoArr[photoIndex])
         }, 200);
     }
+    useEffect(()=>{
+        if(pageZIndex===2){
+            undeployPhotoCarousel();
+        }
+    },[pageZIndex])
 
 
     return (

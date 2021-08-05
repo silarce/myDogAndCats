@@ -17,10 +17,13 @@ function App() {
   })
  //為了開發方便，開發時要把非正在開發的Page註解掉
  // 開發完後再調整回來
+
+ // mina備選顏色#fde6ea
+ // luna備選顏色#ffd890
   return (
     <>
       <SlideShow />    
-        <Page bookmarkName="mina" pageZIndex={pageZIndex.mina} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="#fde6ea" />
+        <Page bookmarkName="mina" pageZIndex={pageZIndex.mina} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="pink" />
         <Page bookmarkName="gallery" pageZIndex={pageZIndex.gallery} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="green" />
         <Page bookmarkName="wolfy" pageZIndex={pageZIndex.wolfy} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="rgb(200, 200, 200)" />
         <Page bookmarkName="show" pageZIndex={pageZIndex.show} setPageZIndex={setPageZIndex} pageDeploy={deployPage} backgroundColor="blue" />

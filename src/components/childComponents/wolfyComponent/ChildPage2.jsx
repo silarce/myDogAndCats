@@ -33,7 +33,7 @@ position:absolute;
 bottom:0%;
 left:50%;
 transform:translateX(-50%);
-margin:auto auto 10vh auto;
+margin:auto auto 7vh auto;
 background-color:#f9f9f9;
 border-radius:30px;
 padding:2vw;

@@ -14,12 +14,15 @@ background-color:${({ backgroundColor }) => backgroundColor};
 transition:${({pageTransition})=>pageTransition}s;
 `
 const SubContainer = styled.div`
-margin:15vh auto 0 auto;
 width:60vw;
 height:80vh;
-background-color:#f9f9f9;
-border-radius:30px;
+position:absolute;
+top:52%;
+left:50%;
+transform:translate(-50%,-50%);
 padding:2vw;
+border-radius:30px;
+background-color:#f9f9f9;
 `
 const TextBox = styled.div`
 width:40%;

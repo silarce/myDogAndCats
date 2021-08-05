@@ -12,20 +12,16 @@ z-index:2;
 background-color:${({ backgroundColor }) => backgroundColor};
 transition:${({pageTransition})=>pageTransition}s;
 `
-
-
 const SubContainer = styled.div`
-position:absolute;
-top:0;
-bottom:0;
-right:0;
-left:0;
-margin:auto;
 width:60vw;
 height:80vh;
-background-color:#f9f9f9;
-border-radius:30px;
+position:absolute;
+top:52%;
+left:50%;
+transform:translate(-50%,-50%);
 padding:2vw;
+border-radius:30px;
+background-color:#f9f9f9;
 `
 const Title = styled.p`
 margin:0;

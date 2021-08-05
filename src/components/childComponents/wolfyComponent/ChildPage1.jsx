@@ -1,4 +1,4 @@
-import {useEffect} from "react"
+
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 
