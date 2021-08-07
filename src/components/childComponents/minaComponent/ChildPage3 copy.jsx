@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState,useEffect } from "react";
 import styled from "@emotion/styled";
 
-import luna1 from "../../../img/Luna_img/Luna_1.jpg";
-import luna2 from "../../../img/Luna_img/Luna_3.jpg";
-import luna3 from "../../../img/Luna_img/Luna_9.jpg";
-import luna4 from "../../../img/Luna_img/Luna_5.jpg";
+import mina1 from "../../../img/Mina_img/Mina_1.jpg";
+import mina2 from "../../../img/Mina_img/Mina_2.jpg";
+import mina3 from "../../../img/Mina_img/Mina_5.jpg";
+import mina4 from "../../../img/Mina_img/Mina_8.jpg";
 
 import { Cancel } from "@emotion-icons/material/Cancel";
 import { LeftArrow } from "@emotion-icons/boxicons-regular/LeftArrow";
@@ -43,6 +43,7 @@ grid-template-columns: auto auto;
 justify-content:space-evenly ;
 grid-gap: 1vh;
 `
+
 const Photo = styled.img`
 width:27vw;
 height:16vw;
@@ -51,19 +52,25 @@ cursor:pointer;
 border-radius:30px;
 background-color:black
 `
+// 先留著，以後可能要改回來
+// const Photo = styled.img`
+// width:20vw;
+// cursor:pointer;
+// `
 // ----------------------------------------
 // 跑馬燈
 const PhotoCarousel = styled.div`
 border-radius:30px;
 position:absolute;
-width:${({ photoCarouselCss }) => photoCarouselCss.width}px;
-height:${({ photoCarouselCss }) => photoCarouselCss.height}px;
-top:${({ photoCarouselCss }) => photoCarouselCss.top}px;
-left:${({ photoCarouselCss }) => photoCarouselCss.left}px;
+width:${({ photoCarouselCss }) => photoCarouselCss.width};
+height:${({ photoCarouselCss }) => photoCarouselCss.height};
+top:${({ photoCarouselCss }) => photoCarouselCss.top};
+left:${({ photoCarouselCss }) => photoCarouselCss.left};
 transition:${({ photoCarouselCss }) => photoCarouselCss.transition}s;
+transform:translate(-50%,-50%);
 opacity:${({ photoCarouselCss }) => photoCarouselCss.opacity};
 user-select: none;
-background-color:black;        
+background-color:black;
 `
 // 跑馬燈裡的圖片
 const PhotoInCarousel = styled.img`
@@ -113,7 +120,7 @@ opacity:${({ iconopacity }) => iconopacity};
 // ----------------------------------------
 let photoIndex = 0;
 // ----------------------------------------
-function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIndex }) {
+function ChildPage3({ backgroundColor, childPageTranslateY,animationTime, pageZIndex }) {
 
     const [photoCarouselCss, setPhotoCarouselCss] = useState({ // 照片跑馬燈的state
         top: 0,
@@ -128,18 +135,15 @@ function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIn
     const [photoInCarouselOpacity, setPhotoInCarouselOpacity] = useState(1)
     // 部屬照片跑馬燈
     const deployPhotoCarousel = (e, elePhotoIndex) => {
-        let subContainerClientRect = e.target.parentNode.parentNode.getBoundingClientRect();
-        
         photoIndex = elePhotoIndex;
         setThePhotoInCarousel(e.target.src);
         let targetClientRect = e.target.getBoundingClientRect();
-
         setPhotoCarouselCss(() => {
             return {
-                width: targetClientRect.width,
-                height: targetClientRect.height,
-                top: targetClientRect.top,
-                left: targetClientRect.left,
+                top: `${targetClientRect.top + (targetClientRect.height * 0.5)}px`,
+                left: `${targetClientRect.left + targetClientRect.width * 0.5}px`,
+                width: `${targetClientRect.width}px`,
+                height: `${targetClientRect.height}px`,
                 transition: 0,
                 opacity: 1
             }
@@ -147,10 +151,10 @@ function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIn
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    width: subContainerClientRect.width,
-                    height: subContainerClientRect.height,
-                    top: subContainerClientRect.top,
-                    left: subContainerClientRect.left,
+                    top: `52%`,
+                    left: `50%`,
+                    width: `60vw`,
+                    height: `80vh`,
                     transition: 1,
                     opacity: 1
                 }
@@ -174,10 +178,10 @@ function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIn
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    width: 0,
-                    height: 0,
                     top: 0,
                     left: 0,
+                    width: 0,
+                    height: 0,
                     transition: 0,
                     opacity: 1
                 }
@@ -189,7 +193,7 @@ function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIn
 
     // 跑馬燈換圖片
     // 圖片陣列
-    const photoArr = [luna1, luna2, luna3, luna4]
+    const photoArr = [mina1, mina2, mina3, mina4]
     const prePhoto = () => {
         setPhotoInCarouselOpacity(0);
         setTimeout(() => {
@@ -222,10 +226,10 @@ function ChildPage3({ backgroundColor, childPageTranslateY,animationTime,pageZIn
                     <Title>精選照片</Title>
                     <hr />
                     <PhotoBox>
-                        <Photo onClick={(e) => { deployPhotoCarousel(e, 0) }} src={luna1} alt="luna的照片" />
-                        <Photo onClick={(e) => { deployPhotoCarousel(e, 1) }} src={luna2} alt="luna的照片" />
-                        <Photo onClick={(e) => { deployPhotoCarousel(e, 2) }} src={luna3} alt="luna的照片" />
-                        <Photo onClick={(e) => { deployPhotoCarousel(e, 3) }} src={luna4} alt="luna的照片" />
+                        <Photo onClick={(e) => { deployPhotoCarousel(e, 0) }} src={mina1} alt="MINA的照片" />
+                        <Photo onClick={(e) => { deployPhotoCarousel(e, 1) }} src={mina2} alt="MINA的照片" />
+                        <Photo onClick={(e) => { deployPhotoCarousel(e, 2) }} src={mina3} alt="MINA的照片" />
+                        <Photo onClick={(e) => { deployPhotoCarousel(e, 3) }} src={mina4} alt="MINA的照片" />
                     </PhotoBox>
                 </SubContainer>
                 <PhotoCarousel photoCarouselCss={photoCarouselCss}>            

@@ -10,31 +10,40 @@ const PageWolfy = lazy(() => { return import("./childComponents/pageWolfy.jsx") 
 const PageLuna = lazy(() => { return import("./childComponents/pageLuna.jsx") })
 const PageShow = lazy(() => { return import("./childComponents/pageShow.jsx") })
 
+
+
+
 const deployAnimation = (theName) => keyframes`
     from{
+        top:-100vh;
         width:20vw;
-        transform:translate(0vw, 0vh);
+        left:${theName === "mina" ? 0 :
+        theName === "gallery" ? 20 :
+            theName === "wolfy" ? 40 :
+                theName === "show" ? 60 : 80}vw;
+        z-index:1;
     }
     50%{
-        width:20vw;;
-        transform:translate(0vw, 100vh);
+        top:0;
+        width:20vw;
+        left:${theName === "mina" ? 0 :
+        theName === "gallery" ? 20 :
+            theName === "wolfy" ? 40 :
+                theName === "show" ? 60 : 80}vw;
+    }
+    99.99%{
+        z-index:1;
     }
     to{
+        top:0vh;
         width:100vw;
-        transform:translate(${theName === "mina" ? 0 :
-        theName === "gallery" ? -20 :
-            theName === "wolfy" ? -40 :
-                theName === "show" ? -60 : -80}vw, 100vh);
+        left:0;
+        z-index:0;
     }
     `
-const undeployAnimation = keyframes`
-    from{
-        transform:translate(0vw,-20vh)
-    }
-    to{
-        transform:translate(0vw,0vh)
-    }
-    `
+// top初始值為-100，然後逐漸降為0
+// left一值為0
+// width初始值為20vw,漸變為100vw
 const Container = styled.div`
 margin:0;
 width:20vw;
@@ -46,14 +55,22 @@ left:${({ bookmarkName }) => bookmarkName === "mina" ? 0 :
         bookmarkName === "gallery" ? 20 :
             bookmarkName === "wolfy" ? 40 :
                 bookmarkName === "show" ? 60 : 80}vw;
-transform:translate(0vw, 0vh);
-z-index:${props => props.stateList.containerZIndex};
-animation-name:${({ stateList, bookmarkName }) => stateList.containerZIndex === 1 || stateList.containerZIndex === 0 ? deployAnimation(bookmarkName) : undeployAnimation};
+z-index:2;
+animation-name:${({ pageDeployState, bookmarkName }) => pageDeployState === "deployed" ? deployAnimation(bookmarkName) : null};
 animation-duration:2s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
 `
+// const Container = styled.div`
+// margin:0;
+// width:${props => props.stateList.containerWidth}vw;
+// height:100vh;
+// background-color:${props => props.backgroundColor};
+// position:absolute;
+// top:${props => props.stateList.containerPositionTop}vh;
 // left:${props => props.stateList.containerPositionLeft}vw;
+// z-index:${props => props.stateList.containerZIndex};
+// `
 const PageBookmark = styled.div`
 width:20vw;
 height:${props => props.bookmarkHeight}vw;
@@ -71,7 +88,7 @@ font-size:3vw;
 `
 
 
-function Page({animationTime, bookmarkName, pageZIndex, setPageZIndex, pageDeploy, backgroundColor }) {
+function Page({ bookmarkName, pageZIndex, setPageZIndex, pageDeploy, backgroundColor }) {
 
     // positionX 根據來自父元素的bookmarkName決定初始位置
     let positionX = bookmarkName === "mina" ? 0 :
@@ -84,6 +101,11 @@ function Page({animationTime, bookmarkName, pageZIndex, setPageZIndex, pageDeplo
     const [containerWidth, setContainerWidth] = useState(100)
     const [containerPositionTop, setContainerPositionTop] = useState(0)
     const [containerPositionLeft, setContainerPositionLeft] = useState(positionX)
+    // ---------------------------------------------------------------------------
+    const [pageDeployState, setPageDeployState] = useState("undeployed")
+
+
+    // ---------------------------------------------------------------------------
 
     let stateList = {
         containerWidth: containerWidth,
@@ -116,21 +138,24 @@ function Page({animationTime, bookmarkName, pageZIndex, setPageZIndex, pageDeplo
     const resetBookmarkHeight = () => {
         setBookmarkHeight(3)
     }
-
+    const pageDeploy2 = () => {
+        setPageDeployState("deployed")
+    }
     return (
         <>
-            <Container stateList={stateList} backgroundColor={backgroundColor} bookmarkName={bookmarkName}>
+            <Container stateList={stateList} backgroundColor={backgroundColor} bookmarkName={bookmarkName} pageDeployState={pageDeployState}>
                 <Suspense fallback={<div>讀取中</div>}>
-                    {bookmarkName === "mina" && (<PageMina pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "wolfy" && (<PageWolfy pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "luna" && (<PageLuna pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "show" && (<PageShow pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "mina" && (<PageMina pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
+                    {bookmarkName === "wolfy" && (<PageWolfy pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
+                    {bookmarkName === "luna" && (<PageLuna pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
+                    {bookmarkName === "show" && (<PageShow pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} />)}
                 </Suspense>
                 <PageBookmark
-                    onClick={() => {
-                        (pageDeploy(bookmarkName, setPageZIndex,
-                            setContainerPositionTop, setContainerWidth, setContainerPositionLeft))
-                    }}
+                    onClick={pageDeploy2}
+                    // onClick={() => {
+                    //     (pageDeploy(bookmarkName, setPageZIndex,
+                    //         setContainerPositionTop, setContainerWidth, setContainerPositionLeft))
+                    // }}
                     onMouseEnter={addBookmarkHeight}
                     onMouseLeave={resetBookmarkHeight}
                     className="pageBookmark"

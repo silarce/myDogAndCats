@@ -40,7 +40,7 @@ overflow:hidden;
 animation-name:${({childPageZIndex})=>{
     return  childPageZIndex===2? deployAnimate:
             childPageZIndex===3? undeployWithHeroImageAnimation:null}};
-animation-duration:${({staticCss})=>staticCss.pageTransition}s;
+animation-duration:${({staticCss})=>staticCss.animationTime}s;
 animation-fill-mode:forwards;
 animation-timing-function:linear;
 `

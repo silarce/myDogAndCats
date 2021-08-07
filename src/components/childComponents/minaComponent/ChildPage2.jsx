@@ -7,10 +7,11 @@ const Container = styled.div`
 position:absolute;
 width:100%;
 height:100%;
-top:${({ childPage2Top }) => childPage2Top}%;
+top:0;
 z-index:2;
 background-color:${({ backgroundColor }) => backgroundColor};
-transition:${({pageTransition})=>pageTransition}s;
+transition:${({animationTime})=>animationTime}s;
+transform:translateY(${({ childPageTranslateY }) => childPageTranslateY}vh);
 `
 const SubContainer = styled.div`
 width:60vw;
@@ -44,12 +45,12 @@ const TheP = styled.p`
 font-size:3vh;
 `
 
-function ChildPage2({ backgroundColor, childPage2Top, pageTransition }) {
+function ChildPage2({ backgroundColor, childPageTranslateY, animationTime }) {
 
 
     return (
         <>
-            <Container backgroundColor={backgroundColor} childPage2Top={childPage2Top} pageTransition={pageTransition}>
+            <Container backgroundColor={backgroundColor} childPageTranslateY={childPageTranslateY} animationTime={animationTime}>
                 <SubContainer>
                     <Title>生平事蹟</Title>
                     <hr />

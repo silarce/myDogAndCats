@@ -14,7 +14,7 @@ function importAllImagesWithArray(theRequireContext) {
     requireContext.keys().map((item, index) => { images[index] = requireContext(item).default; return "" });
     return images;
 }
-const imgArr = importAllImagesWithArray(require.context("../img/index_show", false, /^\.\/.*\.jpg$/))
+const imgArr = importAllImagesWithArray(require.context("img/index_show", false, /^\.\/.*\.jpg$/))
 
 
 

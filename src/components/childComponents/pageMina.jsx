@@ -34,9 +34,11 @@ url(${mina_4_2});
 
 background-repeat: no-repeat;
 background-size: 100% 100%, 75vw;
-background-position-x: ${({ heroPositionX }) => heroPositionX}% ;
+background-position-x: ${({ pageZIndex }) => pageZIndex===0? -60:0}% ;
+transition:1s;
 `
-
+// transition${({animationTime})=>animationTime/3}s;
+// -60>>>0
 const TheName = styled.h1`
 position:absolute;
 font-size:6vw;
@@ -129,9 +131,6 @@ const DownArrow = styled(ArrowIosDownward)`
 width:1vw;
 transform:scale(26,1.5);
 `
-// -----------------------------------------------------
-
-let pageTransition = 2;// 頁面移動的時長，單位為秒
 //---------------------------
 // 以下10項變數都是用於頁面移動的開關與參數
 // 為了避免在頁面移動時再次觸發移動而造成BUG而做了這些開關
@@ -151,39 +150,42 @@ let childPage_3_setTimeoutId = { id: 0 };
 // -----------------------------------------------------
 // pageZIndex除了是這個頁面的z-index外，同時也代表著佈署狀態
 // pageZIndex為2時會將heroImage與三個子頁面反佈署
-function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
+function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, animationTime }) {
     const [heroPositionX, setHeroPositionX] = useState(-60)
     // const [heroPositionX, setHeroPositionX] = useState(0); // 方便開發時的設置
     const [theNameCss, setTheNameCss] = useState({ display: "none", opacity: 0 });
     const [navOpacity, setNavOpacity] = useState(0)
-    const [navTransition, setNavTransition] = useState(pageTransition)
+    const [navTransition, setNavTransition] = useState(animationTime)
     const [Link2ContainerDisplay, setLink2ContainerDisplay] = useState("none")
     const [Link2ContainerOpacity, setLink2ContainerOpacity] = useState(0)
     const [titleCursor, setTitleCursor] = useState("default")
     const [arrowContainerTop, setArrowContainerTop] = useState(0);
 
-    const [childPage1Top, setChildPage1Top] = useState(100);
-    const [childPage2Top, setChildPage2Top] = useState(100);
-    const [childPage3Top, setChildPage3Top] = useState(100);
+    const [childPage1TranslateY, setChildPage1TranslateY] = useState(100);
+    const [childPage2TranslateY, setChildPage2TranslateY] = useState(100);
+    const [childPage3TranslateY, setChildPage3TranslateY] = useState(100);
     // ------------------------------------------------------------------------
     //佈署heroImage
     // 在頁面展開時移動圖片
-    useEffect(() => {
-        if (pageWidth > 20 && pageWidth < 100) {
-            setHeroPositionX((preState) => {
-                if (preState < 0) {
-                    return preState + (6 / 8)
-                }
-                return 0
-            })
-        }
-    }, [pageWidth])
+    // useEffect(() => {
+    //     if (pageWidth > 20 && pageWidth < 100) {
+    //         setHeroPositionX((preState) => {
+    //             if (preState < 0) {
+    //                 return preState + (6 / 8)
+    //             }
+    //             return 0
+    //         })
+    //     }
+    // }, [pageWidth])
     // 頁面回到原位時使HeroPositionX改回-60
     useEffect(() => {
-        if (pagePositionTop === -120) {
+        if (pageZIndex === 2) {
             setHeroPositionX(-60)
         }
-    }, [pagePositionTop])
+        // if (pagePositionTop === -120) {
+        //     setHeroPositionX(-60)
+        // }
+    }, [pageZIndex])
 
     useEffect(() => {
         if (pageZIndex === 0) {
@@ -211,7 +213,7 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
             setTimeout(() => {
                 setLink2ContainerOpacity(1);
             }, 1000);
-        }, pageTransition * 1000);
+        }, animationTime * 1000);
     }
     // 將childPage_1_isMoving在兩秒後改為false，代表childPage已停止
     // 每一次deployChildPage被呼叫時都會呼叫這個函數
@@ -220,7 +222,7 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         clearTimeout(setTimeId.id)
         setTimeId.id = setTimeout(() => {
             moving.moving = false
-        }, pageTransition * 1000);
+        }, animationTime * 1000);
     }
 
     // ------------------------------------------------------------------------
@@ -235,9 +237,9 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         childPageIsStop(
             childPage_1_isMoving,
             childPage_1_setTimeoutId)
-        setChildPage1Top(0)
-        setChildPage2Top(100)
-        setChildPage3Top(100)
+        setChildPage1TranslateY(0)
+        setChildPage2TranslateY(100)
+        setChildPage3TranslateY(100)
         deployNav();
         // 同步滾輪計數器
         wheelSwitchCount = 1;
@@ -249,9 +251,9 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         childPageIsStop(
             childPage_2_isMoving,
             childPage_2_setTimeoutId)
-        setChildPage1Top(0);
-        setChildPage2Top(0);
-        setChildPage3Top(100);
+        setChildPage1TranslateY(0);
+        setChildPage2TranslateY(0);
+        setChildPage3TranslateY(100);
         deployNav();
         wheelSwitchCount = 2
 
@@ -263,9 +265,9 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         childPageIsStop(
             childPage_3_isMoving,
             childPage_3_setTimeoutId)
-        setChildPage1Top(0);
-        setChildPage2Top(0);
-        setChildPage3Top(0);
+        setChildPage1TranslateY(0);
+        setChildPage2TranslateY(0);
+        setChildPage3TranslateY(0);
         deployNav();
         wheelSwitchCount = 3;
 
@@ -278,9 +280,9 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
         if (childPage_1_isMoving.moving ||
             childPage_2_isMoving.moving ||
             childPage_3_isMoving.moving) return;
-        setChildPage1Top(100);
-        setChildPage2Top(100);
-        setChildPage3Top(100);
+        setChildPage1TranslateY(100);
+        setChildPage2TranslateY(100);
+        setChildPage3TranslateY(100);
         setNavOpacity(0);
         setArrowContainerTop(0);
         setLink2ContainerOpacity(0);
@@ -334,7 +336,7 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
                         <Link2 onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link2>
                     </Link2Container>
                 </Nav>
-                <HeroImage heroPositionX={heroPositionX}>
+                <HeroImage pageZIndex={pageZIndex} animationTime={animationTime}>
                     <TheName theNameCss={theNameCss}>
                         MINA
                         <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>
@@ -342,9 +344,9 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
                         <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
                     </TheName >
                 </HeroImage>
-                <ChildPage1 backgroundColor={backgroundColor} childPage1Top={childPage1Top} pageTransition={pageTransition} />
-                <ChildPage2 backgroundColor={backgroundColor} childPage2Top={childPage2Top} pageTransition={pageTransition} />
-                <ChildPage3 backgroundColor={backgroundColor} childPage3Top={childPage3Top} pageTransition={pageTransition} pageZIndex={pageZIndex} />
+                <ChildPage1 backgroundColor={backgroundColor} childPageTranslateY={childPage1TranslateY} animationTime={animationTime} />
+                <ChildPage2 backgroundColor={backgroundColor} childPageTranslateY={childPage2TranslateY} animationTime={animationTime} />
+                <ChildPage3 backgroundColor={backgroundColor} childPageTranslateY={childPage3TranslateY} animationTime={animationTime} pageZIndex={pageZIndex} />
             </Container>
         </>
     )

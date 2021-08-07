@@ -53,7 +53,7 @@ ${({ theLocation }) => theLocation}:0%;
 overflow:hidden;
 z-index:${({ heroImageZIndex }) => heroImageZIndex};
 animation-name:${({ heroImageZIndex }) => heroImageZIndex === 2 ? heroImageAnimation : null};
-animation-duration:${({ pageTransition }) => pageTransition}s;
+animation-duration:${({ animationTime }) => animationTime}s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
 `
@@ -70,19 +70,19 @@ background-position-x: center ;
 background-position-y: 80% ;
 `
 // 10vw要14.2%
+// theLocation的值為left或right
 const heroImageBlurLightAnimation = (theLocation) => keyframes`
 from{
-    ${theLocation}:-20vw;
+    transform:translateX(${theLocation === "left" ? -90 : 90}vw);
 }
 14.2%{
-    ${theLocation}:0vw;
+    transform:translateX(${theLocation === "left" ? -70 : 70}vw);
 }
 85.2%{
-    ${theLocation}:50vw;
+    transform:translateX(${theLocation === "left" ? -50 : 50}%) scaleX(0.2);
 }
 to{
-    ${theLocation}:50vw;
-    width:0vw;
+    transform:translateX(${theLocation === "left" ? -50 : 50}%) scaleX(0);
 }
 `
 const HeroImageBlurLight = styled.div`
@@ -95,15 +95,15 @@ rgba(200,200,200,1) 40%,
 rgba(200,200,200,1) 60%, 
 rgba(200,200,200,0) 100%);
 position: absolute;
-${({ theLocation }) => theLocation}:-20vw;
+${({ theLocation }) => theLocation}:50vw;
 z-index:98;
 animation-name:${({ heroImageZIndex, theLocation }) => {
         return heroImageZIndex === 2 ? heroImageBlurLightAnimation(theLocation) : null
     }};
-animation-duration:${({ pageTransition }) => pageTransition}s;
+animation-duration:${({ animationTime }) => animationTime}s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
-transform:translateX(${({ theLocation }) => theLocation === "left" ? -50 : 50}%);
+transform:translateX(${({ theLocation }) => theLocation === "left" ? -90 : 90}vw);
 `
 const TheNav = styled.div`
 width:${({ shouldNavExpand }) => shouldNavExpand ? 45 : 20}vw;
@@ -163,16 +163,20 @@ border-radius:20px;
 `
 const blurLightAnimate = keyframes`
  from{
-     bottom:-40vh;
+    transform:translateY(0vh);
+    //  bottom:-40vh;
     }
  11%{
-     bottom:-20vh;
+    transform:translateY(-20vh);
+    //  bottom:-20vh;
  }
  67%{
-     bottom:80vh
+    transform:translateY(-120vh);
+    //  bottom:80vh
  }
  to{
-     bottom:140vh;
+    transform:translateY(-180vh);
+    //  bottom:140vh;
  }
 `
 const BlurLight = styled.div`
@@ -190,9 +194,10 @@ z-index:98;
 animation-name:${({ blurLightMove, heroImageZIndex }) => {
         return blurLightMove && heroImageZIndex !== 2 ? blurLightAnimate : null
     }};
-animation-duration:${({ pageTransition }) => pageTransition}s;
+animation-duration:${({ animationTime }) => animationTime}s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
+transform:translateY(0vh);
 `
 // -----------------------------------------------------
 let wheelSwitch = true;
@@ -203,7 +208,7 @@ let shouldNavExpand = true;
 // -----------------------------------------------------
 // pageZIndex除了是這個頁面的z-index外，同時也代表著佈署狀態
 // pageZIndex為2時會將heroImage與三個子頁面反佈署
-function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) {
+function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, animationTime }) {
 
     const [theNavCss, setTheNavCss] = useState({
         display: "none",
@@ -218,12 +223,10 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
     const [childPage2ZIndex, setChildPage2ZIndex] = useState(0);
     const [childPage3ZIndex, setChildPage3ZIndex] = useState(0);
     // ---------------------------------------
-    let pageTransition = 2;// 頁面移動的時長，單位為秒
-    // ---------------------------------------
     // Container用的不會變動的css
     const staticCss = {
         backgroundColor: backgroundColor,
-        pageTransition: pageTransition
+        animationTime: animationTime
     }
     // ------------------------------------------------------------------------
     // 部屬childPage
@@ -243,7 +246,7 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
             setChildPage1ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
             setChildPage2ZIndex(0);// z-index設為0，反佈署
             setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
+        }, animationTime * 1000);
     }
 
     const deployChildPage2 = () => {
@@ -258,7 +261,7 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
             setChildPage2ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
             setChildPage1ZIndex(0);// z-index設為0，反佈署
             setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
+        }, animationTime * 1000);
     }
 
     const deployChildPage3 = () => {
@@ -273,7 +276,7 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
             setChildPage3ZIndex(1);// z-index設為1，使其他page佈署時可以蓋上去
             setChildPage1ZIndex(0);// z-index設為0，反佈署
             setChildPage2ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
+        }, animationTime * 1000);
     }
     // ------------------------------------------------------------------------
     // 將所有childPage反部屬，並回到heroImage
@@ -291,8 +294,8 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
             setChildPage1ZIndex(0);// z-index設為0，反佈署
             setChildPage2ZIndex(0);// z-index設為0，反佈署
             setChildPage3ZIndex(0);// z-index設為0，反佈署
-        }, pageTransition * 1000);
-    }, [blurLightMove, heroImageZIndex, pageTransition])
+        }, animationTime * 1000);
+    }, [blurLightMove, heroImageZIndex, animationTime])
 
     // --------------------------------------------
     // 滾動滑鼠滾輪移動頁面
@@ -310,7 +313,7 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
         wheelSwitch = false;
         setTimeout(() => {
             wheelSwitch = true
-        }, pageTransition * 1000)
+        }, animationTime * 1000)
 
     }
     // ------------------------------------------------------------------------
@@ -342,33 +345,34 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex }) 
     }, [pageZIndex, undeployChildPages]);
     // -------------------------------------------------
     // -------------------------------------------------
-    // -------------------------------------------------
+
     return (
         <>
             <Container onWheel={changePage}>
                 {pageZIndex === 1 && <HeroImage100Width />}
-                <HeroImageContainer theLocation={"left"} pageTransition={pageTransition} heroImageZIndex={heroImageZIndex}>
-                    <HeroImage50Width theLocation={"left"} />
-                </HeroImageContainer>
-                <HeroImageContainer theLocation={"right"} pageTransition={pageTransition} heroImageZIndex={heroImageZIndex}>
-                    <HeroImage50Width theLocation={"right"} />
-                </HeroImageContainer>
-
-                <TheNav theNavCss={theNavCss} heroImageZIndex={heroImageZIndex} blurLightMove={blurLightMove} shouldNavExpand={shouldNavExpand}>
-                    <WolfyName onClick={() => { undeployChildPages(); shouldNavExpand = true; }}>WOLFY</WolfyName>
-                    <br />
-                    <LinkBox>
-                        <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>
-                        <Link onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link>
-                        <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
-                    </LinkBox>
-                </TheNav >
-                <ChildPage1 staticCss={staticCss} childPageZIndex={childPage1ZIndex} />
-                <ChildPage2 staticCss={staticCss} childPageZIndex={childPage2ZIndex} />
-                <ChildPage3 staticCss={staticCss} childPageZIndex={childPage3ZIndex} pageZIndex={pageZIndex} />
-                <BlurLight blurLightMove={blurLightMove} heroImageZIndex={heroImageZIndex} pageTransition={pageTransition} />
-                <HeroImageBlurLight heroImageZIndex={heroImageZIndex} pageTransition={pageTransition} theLocation={"left"} />
-                <HeroImageBlurLight heroImageZIndex={heroImageZIndex} pageTransition={pageTransition} theLocation={"right"} />
+                {pageZIndex === 0 && <>
+                    <HeroImageContainer theLocation={"left"} animationTime={animationTime} heroImageZIndex={heroImageZIndex}>
+                        <HeroImage50Width theLocation={"left"} />
+                    </HeroImageContainer>
+                    <HeroImageContainer theLocation={"right"} animationTime={animationTime} heroImageZIndex={heroImageZIndex}>
+                        <HeroImage50Width theLocation={"right"} />
+                    </HeroImageContainer>
+                    <TheNav theNavCss={theNavCss} heroImageZIndex={heroImageZIndex} blurLightMove={blurLightMove} shouldNavExpand={shouldNavExpand}>
+                        <WolfyName onClick={() => { undeployChildPages(); shouldNavExpand = true; }}>WOLFY</WolfyName>
+                        <br />
+                        <LinkBox>
+                            <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>
+                            <Link onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link>
+                            <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
+                        </LinkBox>
+                    </TheNav >
+                    <ChildPage1 staticCss={staticCss} childPageZIndex={childPage1ZIndex} />
+                    <ChildPage2 staticCss={staticCss} childPageZIndex={childPage2ZIndex} />
+                    <ChildPage3 staticCss={staticCss} childPageZIndex={childPage3ZIndex} pageZIndex={pageZIndex} />
+                    <BlurLight blurLightMove={blurLightMove} heroImageZIndex={heroImageZIndex} animationTime={animationTime} />
+                    <HeroImageBlurLight heroImageZIndex={heroImageZIndex} animationTime={animationTime} theLocation={"left"} />
+                    <HeroImageBlurLight heroImageZIndex={heroImageZIndex} animationTime={animationTime} theLocation={"right"} />
+                </>}
             </Container>
         </>
     )

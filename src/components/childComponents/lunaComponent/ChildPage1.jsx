@@ -8,10 +8,11 @@ padding:0 20vw 0 20vw;
 position:absolute;
 width:100%;
 height:100%;
-top:${({ childPage1Top }) => childPage1Top}%;
+top:0;
 z-index:1;
 background-color:${({ backgroundColor }) => backgroundColor};
-transition:${({pageTransition})=>pageTransition}s;
+transition:${({animationTime})=>animationTime}s;
+transform:translateY(${({ childPageTranslateY }) => childPageTranslateY}vh);
 `
 const SubContainer = styled.div`
 width:60vw;
@@ -53,12 +54,12 @@ font-size:3vh;
 margin-bottom:0.3rem;
 `
 
-function ChildPage1({ backgroundColor, childPage1Top ,pageTransition }) {
+function ChildPage1({ backgroundColor, childPageTranslateY ,animationTime }) {
 
 
     return (
         <>
-            <Container backgroundColor={backgroundColor} childPage1Top={childPage1Top} pageTransition={pageTransition}>
+            <Container backgroundColor={backgroundColor} childPageTranslateY={childPageTranslateY} animationTime={animationTime}>
                 <SubContainer>
                     <TextBox>
                     <Title>基本資料</Title>

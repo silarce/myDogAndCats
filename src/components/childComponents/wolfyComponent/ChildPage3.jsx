@@ -34,7 +34,7 @@ z-index:${({ childPageZIndex }) => childPageZIndex};
 background-color:${({ staticCss }) => staticCss.backgroundColor};
 overflow:hidden;
 animation-name:${({ childPageZIndex }) => { return childPageZIndex === 2 ? deployAnimate : null }};
-animation-duration:${({ staticCss }) => staticCss.pageTransition}s;
+animation-duration:${({ staticCss }) => staticCss.animationTime}s;
 animation-fill-mode:forwards;
 animation-timing-function:linear;
 `
@@ -73,18 +73,16 @@ background-color:black
 // ----------------------------------------
 // 跑馬燈
 const PhotoCarousel = styled.div`
-width:${({ photoCarouselCss }) => photoCarouselCss.width};
-height:${({ photoCarouselCss }) => photoCarouselCss.height};
 border-radius:30px;
-background-color:black;
-opacity:${({ photoCarouselCss }) => photoCarouselCss.opacity};
 position:absolute;
-left:${({ photoCarouselCss }) => photoCarouselCss.left};
-bottom:${({ photoCarouselCss }) => photoCarouselCss.bottom};
-transform:translateX(-50%);
-margin-bottom:${({ photoCarouselCss }) => photoCarouselCss.bottom === "0%" ? 7 : 0}vh;
+width:${({ photoCarouselCss }) => photoCarouselCss.width}px;
+height:${({ photoCarouselCss }) => photoCarouselCss.height}px;
+top:${({ photoCarouselCss }) => photoCarouselCss.top}px;
+left:${({ photoCarouselCss }) => photoCarouselCss.left}px;
 transition:${({ photoCarouselCss }) => photoCarouselCss.transition}s;
+opacity:${({ photoCarouselCss }) => photoCarouselCss.opacity};
 user-select: none;
+background-color:black;        
 `
 // 跑馬燈裡的圖片
 const PhotoInCarousel = styled.img`
@@ -149,15 +147,17 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
     const [photoInCarouselOpacity, setPhotoInCarouselOpacity] = useState(1)
     // 部屬照片跑馬燈
     const deployPhotoCarousel = (e, elePhotoIndex) => {
+        let subContainerClientRect = e.target.parentNode.parentNode.getBoundingClientRect();
         photoIndex = elePhotoIndex;
         setThePhotoInCarousel(e.target.src);
         let targetClientRect = e.target.getBoundingClientRect();
+
         setPhotoCarouselCss(() => {
             return {
-                bottom: `calc(100vh - ${targetClientRect.bottom}px)`,
-                left: `${targetClientRect.left + targetClientRect.width * 0.5}px`,
-                width: `${targetClientRect.width}px`,
-                height: `${targetClientRect.height}px`,
+                width: targetClientRect.width,
+                height: targetClientRect.height,
+                top: targetClientRect.top,
+                left: targetClientRect.left,
                 transition: 0,
                 opacity: 1
             }
@@ -165,10 +165,10 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    bottom: `0%`,
-                    left: `50%`,
-                    width: `60vw`,
-                    height: `80vh`,
+                    width: subContainerClientRect.width,
+                    height: subContainerClientRect.height,
+                    top: subContainerClientRect.top,
+                    left: subContainerClientRect.left,
                     transition: 1,
                     opacity: 1
                 }
@@ -177,7 +177,7 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
         setTimeout(() => {
             setIconOpacity(1);
         }, 1000);
-    }
+    } //deployPhotoCarousel
     // 反部屬跑馬燈
     const undeployPhotoCarousel = () => {
         setPhotoCarouselCss((preState) => {
@@ -192,10 +192,10 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    bottom: 0,
-                    left: 0,
                     width: 0,
                     height: 0,
+                    top: 0,
+                    left: 0,
                     transition: 0,
                     opacity: 1
                 }
@@ -203,11 +203,7 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
             setIconOpacity(0);
         }, 500);
     }
-    useEffect(() => {
-        if (pageZIndex === 2) {
-            undeployPhotoCarousel();
-        }
-    }, [pageZIndex])
+
 
     // 跑馬燈換圖片
     // 圖片陣列
@@ -230,7 +226,11 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
             setThePhotoInCarousel(photoArr[photoIndex])
         }, 200);
     }
-
+    useEffect(() => {
+        if (pageZIndex === 2) {
+            undeployPhotoCarousel();
+        }
+    }, [pageZIndex])
 
     return (
         <>

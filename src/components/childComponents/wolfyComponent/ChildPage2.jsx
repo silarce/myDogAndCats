@@ -22,7 +22,7 @@ z-index:${({childPageZIndex})=>childPageZIndex};
 background-color:${({ staticCss }) => staticCss.backgroundColor};
 overflow:hidden;
 animation-name:${({childPageZIndex})=>{return childPageZIndex===2? deployAnimate:null}};
-animation-duration:${({staticCss})=>staticCss.pageTransition}s;
+animation-duration:${({staticCss})=>staticCss.animationTime}s;
 animation-fill-mode:forwards;
 animation-timing-function:linear;
 `

@@ -14,10 +14,11 @@ const Container = styled.div`
 position:absolute;
 width:100%;
 height:100%;
-top:${({ childPage3Top }) => childPage3Top}%;
+top:0;
 z-index:3;
 background-color:${({ backgroundColor }) => backgroundColor};
-transition:${({pageTransition})=>pageTransition}s;
+transition:${({animationTime})=>animationTime}s;
+transform:translateY(${({ childPageTranslateY }) => childPageTranslateY}vh);
 `
 const SubContainer = styled.div`
 width:60vw;
@@ -61,15 +62,14 @@ background-color:black
 const PhotoCarousel = styled.div`
 border-radius:30px;
 position:absolute;
-width:${({ photoCarouselCss }) => photoCarouselCss.width};
-height:${({ photoCarouselCss }) => photoCarouselCss.height};
-top:${({ photoCarouselCss }) => photoCarouselCss.top};
-left:${({ photoCarouselCss }) => photoCarouselCss.left};
+width:${({ photoCarouselCss }) => photoCarouselCss.width}px;
+height:${({ photoCarouselCss }) => photoCarouselCss.height}px;
+top:${({ photoCarouselCss }) => photoCarouselCss.top}px;
+left:${({ photoCarouselCss }) => photoCarouselCss.left}px;
 transition:${({ photoCarouselCss }) => photoCarouselCss.transition}s;
-transform:translate(-50%,-50%);
 opacity:${({ photoCarouselCss }) => photoCarouselCss.opacity};
 user-select: none;
-background-color:black;
+background-color:black;        
 `
 // 跑馬燈裡的圖片
 const PhotoInCarousel = styled.img`
@@ -119,13 +119,13 @@ opacity:${({ iconopacity }) => iconopacity};
 // ----------------------------------------
 let photoIndex = 0;
 // ----------------------------------------
-function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex }) {
+function ChildPage3({ backgroundColor, childPageTranslateY,animationTime, pageZIndex }) {
 
     const [photoCarouselCss, setPhotoCarouselCss] = useState({ // 照片跑馬燈的state
-        top: 0,
-        left: 0,
         width: "0px",
         height: "0px",
+        top: 0,
+        left: 0,
         transition: 0,
         opacity: 0
     })
@@ -134,15 +134,17 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex 
     const [photoInCarouselOpacity, setPhotoInCarouselOpacity] = useState(1)
     // 部屬照片跑馬燈
     const deployPhotoCarousel = (e, elePhotoIndex) => {
+        let subContainerClientRect = e.target.parentNode.parentNode.getBoundingClientRect();
         photoIndex = elePhotoIndex;
         setThePhotoInCarousel(e.target.src);
         let targetClientRect = e.target.getBoundingClientRect();
+
         setPhotoCarouselCss(() => {
             return {
-                top: `${targetClientRect.top + (targetClientRect.height * 0.5)}px`,
-                left: `${targetClientRect.left + targetClientRect.width * 0.5}px`,
-                width: `${targetClientRect.width}px`,
-                height: `${targetClientRect.height}px`,
+                width: targetClientRect.width,
+                height: targetClientRect.height,
+                top: targetClientRect.top,
+                left: targetClientRect.left,
                 transition: 0,
                 opacity: 1
             }
@@ -150,10 +152,10 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex 
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    top: `52%`,
-                    left: `50%`,
-                    width: `60vw`,
-                    height: `80vh`,
+                    width: subContainerClientRect.width,
+                    height: subContainerClientRect.height,
+                    top: subContainerClientRect.top,
+                    left: subContainerClientRect.left,
                     transition: 1,
                     opacity: 1
                 }
@@ -177,10 +179,10 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex 
         setTimeout(() => {
             setPhotoCarouselCss(() => {
                 return {
-                    top: 0,
-                    left: 0,
                     width: 0,
                     height: 0,
+                    top: 0,
+                    left: 0,
                     transition: 0,
                     opacity: 1
                 }
@@ -220,7 +222,7 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex 
 
     return (
         <>
-            <Container backgroundColor={backgroundColor} childPage3Top={childPage3Top} pageTransition={pageTransition}>
+            <Container backgroundColor={backgroundColor} childPageTranslateY={childPageTranslateY} animationTime={animationTime}>
                 <SubContainer>
                     <Title>精選照片</Title>
                     <hr />
@@ -234,7 +236,7 @@ function ChildPage3({ backgroundColor, childPage3Top,pageTransition, pageZIndex 
                 <PhotoCarousel photoCarouselCss={photoCarouselCss}>            
                     <LeftArrowIcon onClick={prePhoto} backgroundcolor={backgroundColor} iconopacity={iconOpacity} />
                     <RightArrowIcon onClick={nextPhoto} backgroundcolor={backgroundColor} iconopacity={iconOpacity} />
-                    <PhotoInCarousel src={thePhotoInCarousel} alt="MINA的照片" photoInCarouselOpacity={photoInCarouselOpacity} />
+                    <PhotoInCarousel src={thePhotoInCarousel} photoInCarouselOpacity={photoInCarouselOpacity} />
                     <CancelIcon onClick={undeployPhotoCarousel} backgroundcolor={backgroundColor} iconopacity={iconOpacity} />
                 </PhotoCarousel>
             </Container>
