@@ -5,11 +5,11 @@ import { keyframes } from "@emotion/react";
 
 import { ArrowIosDownward } from "@emotion-icons/evaicons-solid/ArrowIosDownward";
 
-import ChildPage1 from "./lunaComponent/ChildPage1.jsx";
-import ChildPage2 from "./lunaComponent/ChildPage2.jsx";
-import ChildPage3 from "./lunaComponent/ChildPage3.jsx";
+import ChildPage1 from "./minaComponent/ChildPage1.jsx";
+import ChildPage2 from "./minaComponent/ChildPage2.jsx";
+import ChildPage3 from "./minaComponent/ChildPage3.jsx";
 
-import Luna_13 from "../../img/Luna_img/Luna_13.jpg";
+import mina_4_2 from "../../img/Mina_img/Mina_4_2.jpg";
 
 
 const Container = styled.div`
@@ -20,39 +20,40 @@ height:100%;
 z-index:0;
 `
 const heroImageBackgroundMoveAnimation = keyframes`
-from{
-    background-position-x: 0% ;
-}
-50%{
-    background-position-x: 0% ;
+from,50%{
+background-position-x: -60% ;
 }
 to{
-    background-position-x: 80% ;
+    background-position-x: 0% ;
 }
 `
 
 const HeroImage = styled.div`
 width: 100vw;
 height: 100vh;
-background-image: linear-gradient(
-    270deg, rgba(255,255,255,0) 0%,  rgba(255,255,255,0.3) 50%, rgba(240,240,240,1) 75%, rgba(240,240,240,1) 100%),
-    url(${Luna_13});
+
+background-image: 
+linear-gradient(
+90deg, rgba(255,255,255,0) 0%,
+rgba(255,255,255,0.3) 50%,
+rgba(240,240,240,1) 75%,
+rgba(240,240,240,1) 100%),
+url(${mina_4_2});
+
 background-repeat: no-repeat;
-background-size: 100% 100%, 120vw;
-background-position-x:0% ;
-background-position-y: 50% ;
-position:absolute;
-right:0%;
+background-size: 100vw 100vh, 75vw;
+background-position-x: -60% ;
 animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : heroImageBackgroundMoveAnimation};
 animation-duration:${({ animationTime }) => animationTime}s;
 animation-fill-mode:forwards;
 animation-timing-function:linear
-    `
-// 0>>>80
+`
+// transition${({animationTime})=>animationTime/3}s;
+// -60>>>0
 const TheName = styled.h1`
 position:absolute;
 font-size:6vw;
-right:71%;
+left:71%;
 top:10%;
 transition:2s;
 display:${({ theNameCss }) => theNameCss.display};
@@ -76,7 +77,6 @@ background-color:transparent;
 const Nav = styled.div`
 position:absolute;
 top:0;
-right:0;
 margin:0;
 width:20vw;
 height:45vh;
@@ -112,6 +112,8 @@ transition:1s;
 display:${({ Link2ContainerDisplay }) => Link2ContainerDisplay};
 opacity:${({ Link2ContainerOpacity }) => Link2ContainerOpacity};
 `
+// 改設計了，用不到了，但還是先留著吧
+
 // 導覽列裡的按鈕
 const Link2 = styled.div`
 text-align:center;
@@ -134,7 +136,6 @@ text-align: center;
 margin-top: -13px;
 position:relative;
 transition:1s;
-top:13vw;
 top:${({ arrowContainerTop }) => arrowContainerTop}vw;
 `
 const DownArrow = styled(ArrowIosDownward)`
@@ -158,7 +159,9 @@ let childPage_2_setTimeoutId = { id: 0 };
 let childPage_3_setTimeoutId = { id: 0 };
 //---------------------------
 // -----------------------------------------------------
-function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
+// pageZIndex除了是這個頁面的z-index外，同時也代表著佈署狀態
+// pageZIndex為2時會將heroImage與三個子頁面反佈署
+function PageMina({ backgroundColor, pageZIndex, animationTime }) {
 
     const [theNameCss, setTheNameCss] = useState({ display: "none", opacity: 0 });
     const [navOpacity, setNavOpacity] = useState(0)
@@ -181,11 +184,11 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
             }, 50);
         } else {
             setTheNameCss({ display: "none", opacity: 0 })
-        };
+        }
         if (pageZIndex === 2) {
             undeployChildPages();
         }
-    }, [pageZIndex])
+    }, [pageZIndex]);
     // ------------------------------------------------------------------------
     // 部屬導覽列
     const deployNav = () => {
@@ -201,7 +204,9 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
             }, 1000);
         }, animationTime * 1000);
     }
-    // 將childPage
+    // 將childPage_1_isMoving在兩秒後改為false，代表childPage已停止
+    // 每一次deployChildPage被呼叫時都會呼叫這個函數
+    // 每次呼叫都會將前次的setTimeout清除並重新計時
     const childPageIsStop = (moving, setTimeId) => {
         clearTimeout(setTimeId.id)
         setTimeId.id = setTimeout(() => {
@@ -210,7 +215,9 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
     }
 
     // ------------------------------------------------------------------------
-
+    // 部屬childPage
+    // 部屬childPage
+    // 部屬childPage
     const deployChildPage1 = () => {
         // 若是在頁面移動時點擊title會發生BUG
         // 因此設置開關避免這樣的問題
@@ -237,7 +244,8 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
         setChildPage2TranslateY(0);
         setChildPage3TranslateY(100);
         deployNav();
-        wheelSwitchCount = 2;
+        wheelSwitchCount = 2
+
     }
 
     const deployChildPage3 = () => {
@@ -251,10 +259,12 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
         setChildPage3TranslateY(0);
         deployNav();
         wheelSwitchCount = 3;
+
     }
     // ------------------------------------------------------------------------
-    // 回到第一頁並反部屬導覽列
-
+    // 將所有childPage反部屬，並回到第一頁
+    // 將所有childPage反部屬，並回到第一頁
+    // 將所有childPage反部屬，並回到第一頁
     const undeployChildPages = () => {
         if (childPage_1_isMoving.moving ||
             childPage_2_isMoving.moving ||
@@ -277,6 +287,8 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
         wheelSwitchCount = 0;
     }
 
+    // --------------------------------------------
+    // 滾動滑鼠滾輪移動頁面
     const changePage = (e) => {
         if (!wheelSwitch) return
         if (e.deltaY > 0 && wheelSwitchCount < 3) {
@@ -293,21 +305,22 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
         }, 300)
 
     }
+    // -------------------------------------------------
 
     return (
-        pageZIndex === 2 ? "" :
-            <Container onWheel={pageZIndex === 0 ? changePage : null}>
-                <HeroImage pageZIndex={pageZIndex} animationTime={animationTime}>
-                    <TheName theNameCss={theNameCss}>
-                        LUNA
-                        <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>
-                        <Link onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link>
-                        <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
-                    </TheName >
-                </HeroImage>
-                {pageZIndex === 0 && <>
+        <>
+            {pageZIndex !== 2 && <>
+                <Container onWheel={changePage}>
+                    <HeroImage pageZIndex={pageZIndex} animationTime={animationTime}>
+                        <TheName theNameCss={theNameCss}>
+                            MINA
+                            <Link onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link>
+                            <Link onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link>
+                            <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
+                        </TheName >
+                    </HeroImage>
                     <Nav backgroundColor={backgroundColor} navOpacity={navOpacity} navTransition={navTransition}>
-                        <Title onClick={undeployChildPages} titleCursor={titleCursor}>LUNA</Title>
+                        <Title onClick={undeployChildPages} titleCursor={titleCursor}>MINA</Title>
                         <TheHr />
                         <TheHr />
                         <ArrowContainer arrowContainerTop={arrowContainerTop} >
@@ -324,9 +337,10 @@ function PageLuna({ backgroundColor, pageZIndex, animationTime }) {
                     <ChildPage1 backgroundColor={backgroundColor} childPageTranslateY={childPage1TranslateY} animationTime={animationTime} />
                     <ChildPage2 backgroundColor={backgroundColor} childPageTranslateY={childPage2TranslateY} animationTime={animationTime} />
                     <ChildPage3 backgroundColor={backgroundColor} childPageTranslateY={childPage3TranslateY} animationTime={animationTime} pageZIndex={pageZIndex} />
-                </>}
-            </Container>
+                </Container>
+            </>}
+        </>
     )
 }
 
-export default PageLuna;
+export default PageMina;

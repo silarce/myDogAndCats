@@ -47,94 +47,76 @@ left:${({ bookmarkName }) => bookmarkName === "mina" ? 0 :
             bookmarkName === "wolfy" ? 40 :
                 bookmarkName === "show" ? 60 : 80}vw;
 transform:translate(0vw, 0vh);
-z-index:${props => props.stateList.containerZIndex};
-animation-name:${({ stateList, bookmarkName }) => stateList.containerZIndex === 1 || stateList.containerZIndex === 0 ? deployAnimation(bookmarkName) : undeployAnimation};
+z-index:${({pageZIndex}) => pageZIndex};
+animation-name:${({ pageZIndex, bookmarkName }) => pageZIndex === 1 || pageZIndex === 0 ? deployAnimation(bookmarkName) : undeployAnimation};
 animation-duration:2s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
 `
-// left:${props => props.stateList.containerPositionLeft}vw;
 const PageBookmark = styled.div`
 width:20vw;
-height:${props => props.bookmarkHeight}vw;
-line-height:${props => props.bookmarkHeight}vw;
+height:3vw;
+line-height:3vw;
 background:${props => props.backgroundColor};
 position:absolute;
-bottom:-${props => props.bookmarkHeight}vw;
+bottom:-3vw;
 border-radius: 0 0 50% 50%;
 text-align:center;
 transition:0.5s;
 &:hover{
     color:white;
+    height:5vw;
+    line-height:5vw;
+    bottom:-5vw;
 }
 font-size:3vw;
 `
 
 
-function Page({animationTime, bookmarkName, pageZIndex, setPageZIndex, pageDeploy, backgroundColor }) {
 
-    // positionX 根據來自父元素的bookmarkName決定初始位置
-    let positionX = bookmarkName === "mina" ? 0 :
-        bookmarkName === "gallery" ? 20 :
-            bookmarkName === "wolfy" ? 40 :
-                bookmarkName === "show" ? 60 :
-                    bookmarkName === "luna" ? 80 : undefined;
-
-
-    const [containerWidth, setContainerWidth] = useState(100)
-    const [containerPositionTop, setContainerPositionTop] = useState(0)
-    const [containerPositionLeft, setContainerPositionLeft] = useState(positionX)
-
-    let stateList = {
-        containerWidth: containerWidth,
-        containerPositionTop: containerPositionTop,
-        containerPositionLeft: containerPositionLeft,
-        containerZIndex: pageZIndex
-    }
+function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundColor }) {
+    // 這幾行都用不到了，但還是暫時先留著好了
+    // const [containerWidth, setContainerWidth] = useState(100)
+    // const [containerPositionTop, setContainerPositionTop] = useState(0)
+    // const [containerPositionLeft, setContainerPositionLeft] = useState(positionX)
+    // let stateList = {
+        // containerWidth: containerWidth,
+        // containerPositionTop: containerPositionTop,
+        // containerPositionLeft: containerPositionLeft,
+        // containerZIndex: pageZIndex
+    // }
 
     // ---------------------------------------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------
     // 將該page反部屬，也就是回到原位
     // 將該page反部屬，也就是回到原位
-    useEffect(() => {
-        if (pageZIndex === 2) {
-            setContainerWidth(20);
-            setContainerPositionTop(-120);
-            setContainerPositionLeft(positionX);
-            let intervalId = setInterval(() => {
-                setContainerPositionTop((preState) => {
-                    if (preState < -100) { return preState + 0.2; } else { clearInterval(intervalId); return -100 }
-                })
-            }, 1000 / 60);
-        }
-    }, [pageZIndex, positionX])
+    // 用不到了，但還是暫時先留著好了
+    // useEffect(() => {
+    //     if (pageZIndex === 2) {
+    //         setContainerWidth(20);
+    //         setContainerPositionTop(-120);
+    //         setContainerPositionLeft(positionX);
+    //         let intervalId = setInterval(() => {
+    //             setContainerPositionTop((preState) => {
+    //                 if (preState < -100) { return preState + 0.2; } else { clearInterval(intervalId); return -100 }
+    //             })
+    //         }, 1000 / 60);
+    //     }
+    // }, [pageZIndex, positionX])
     // ---------------------------------------------------------------------------------------------
-    const [bookmarkHeight, setBookmarkHeight] = useState(3)
-    const addBookmarkHeight = () => {
-        setBookmarkHeight(5)
-    }
-    const resetBookmarkHeight = () => {
-        setBookmarkHeight(3)
-    }
-
+ 
     return (
         <>
-            <Container stateList={stateList} backgroundColor={backgroundColor} bookmarkName={bookmarkName}>
+            <Container pageZIndex={pageZIndex} backgroundColor={backgroundColor} bookmarkName={bookmarkName}>
                 <Suspense fallback={<div>讀取中</div>}>
-                    {bookmarkName === "mina" && (<PageMina pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "wolfy" && (<PageWolfy pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "luna" && (<PageLuna pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
-                    {bookmarkName === "show" && (<PageShow pageWidth={containerWidth} pagePositionTop={containerPositionTop} backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "mina" && (<PageMina backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "wolfy" && (<PageWolfy backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "luna" && (<PageLuna backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "show" && (<PageShow backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                 </Suspense>
                 <PageBookmark
-                    onClick={() => {
-                        (pageDeploy(bookmarkName, setPageZIndex,
-                            setContainerPositionTop, setContainerWidth, setContainerPositionLeft))
-                    }}
-                    onMouseEnter={addBookmarkHeight}
-                    onMouseLeave={resetBookmarkHeight}
+                    onClick={()=>{deployPage(bookmarkName)}}
                     className="pageBookmark"
-                    bookmarkHeight={bookmarkHeight}
                     backgroundColor={backgroundColor}>{bookmarkName.toUpperCase()}</PageBookmark>
             </Container>
 
@@ -142,5 +124,10 @@ function Page({animationTime, bookmarkName, pageZIndex, setPageZIndex, pageDeplo
     )
 
 }
+// 用不到了，但暫時先留著好了
+// onClick={() => {
+//     (pageDeploy(bookmarkName, setPageZIndex,
+//         setContainerPositionTop, setContainerWidth, setContainerPositionLeft))
+// }}
 
 export default Page;

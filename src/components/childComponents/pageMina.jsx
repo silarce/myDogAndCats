@@ -1,8 +1,7 @@
-//為了開發方便，要這樣設置，開發完後再改回去
-// const [heroPositionX, setHeroPositionX] = useState(0)
 
 import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
 
 import { ArrowIosDownward } from "@emotion-icons/evaicons-solid/ArrowIosDownward";
 
@@ -20,6 +19,15 @@ width:100%;
 height:100%;
 z-index:0;
 `
+const heroImageBackgroundMoveAnimation = keyframes`
+from,50%{
+background-position-x: -60% ;
+}
+to{
+    background-position-x: 0% ;
+}
+`
+
 const HeroImage = styled.div`
 width: 100vw;
 height: 100vh;
@@ -33,9 +41,12 @@ rgba(240,240,240,1) 100%),
 url(${mina_4_2});
 
 background-repeat: no-repeat;
-background-size: 100% 100%, 75vw;
-background-position-x: ${({ pageZIndex }) => pageZIndex===0? -60:0}% ;
-transition:1s;
+background-size: 100vw 100vh, 75vw;
+background-position-x: -60% ;
+animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : heroImageBackgroundMoveAnimation};
+animation-duration:${({ animationTime }) => animationTime}s;
+animation-fill-mode:forwards;
+animation-timing-function:linear
 `
 // transition${({animationTime})=>animationTime/3}s;
 // -60>>>0
@@ -150,9 +161,8 @@ let childPage_3_setTimeoutId = { id: 0 };
 // -----------------------------------------------------
 // pageZIndex除了是這個頁面的z-index外，同時也代表著佈署狀態
 // pageZIndex為2時會將heroImage與三個子頁面反佈署
-function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, animationTime }) {
-    const [heroPositionX, setHeroPositionX] = useState(-60)
-    // const [heroPositionX, setHeroPositionX] = useState(0); // 方便開發時的設置
+function PageMina({ backgroundColor, pageZIndex, animationTime }) {
+
     const [theNameCss, setTheNameCss] = useState({ display: "none", opacity: 0 });
     const [navOpacity, setNavOpacity] = useState(0)
     const [navTransition, setNavTransition] = useState(animationTime)
@@ -165,28 +175,7 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, ani
     const [childPage2TranslateY, setChildPage2TranslateY] = useState(100);
     const [childPage3TranslateY, setChildPage3TranslateY] = useState(100);
     // ------------------------------------------------------------------------
-    //佈署heroImage
-    // 在頁面展開時移動圖片
-    // useEffect(() => {
-    //     if (pageWidth > 20 && pageWidth < 100) {
-    //         setHeroPositionX((preState) => {
-    //             if (preState < 0) {
-    //                 return preState + (6 / 8)
-    //             }
-    //             return 0
-    //         })
-    //     }
-    // }, [pageWidth])
-    // 頁面回到原位時使HeroPositionX改回-60
-    useEffect(() => {
-        if (pageZIndex === 2) {
-            setHeroPositionX(-60)
-        }
-        // if (pagePositionTop === -120) {
-        //     setHeroPositionX(-60)
-        // }
-    }, [pageZIndex])
-
+    //  佈署heroImage的nav
     useEffect(() => {
         if (pageZIndex === 0) {
             setTheNameCss({ display: "block", opacity: 0 })
@@ -319,23 +308,8 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, ani
     // -------------------------------------------------
 
     return (
-        <>
-            <Container onWheel={changePage}>
-                <Nav backgroundColor={backgroundColor} navOpacity={navOpacity} navTransition={navTransition}>
-                    <Title onClick={undeployChildPages} titleCursor={titleCursor}>MINA</Title>
-                    <TheHr />
-                    <TheHr />
-                    <ArrowContainer arrowContainerTop={arrowContainerTop} >
-                        <DownArrow />
-                        <br />
-                        <DownArrow style={{ marginTop: "-25px" }} />
-                    </ArrowContainer>
-                    <Link2Container Link2ContainerDisplay={Link2ContainerDisplay} Link2ContainerOpacity={Link2ContainerOpacity}>
-                        <Link2 onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link2>
-                        <Link2 onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link2>
-                        <Link2 onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link2>
-                    </Link2Container>
-                </Nav>
+        pageZIndex === 2 ? "" :
+            <Container onWheel={pageZIndex === 0?changePage:null}>
                 <HeroImage pageZIndex={pageZIndex} animationTime={animationTime}>
                     <TheName theNameCss={theNameCss}>
                         MINA
@@ -344,11 +318,27 @@ function PageMina({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, ani
                         <Link onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link>
                     </TheName >
                 </HeroImage>
-                <ChildPage1 backgroundColor={backgroundColor} childPageTranslateY={childPage1TranslateY} animationTime={animationTime} />
-                <ChildPage2 backgroundColor={backgroundColor} childPageTranslateY={childPage2TranslateY} animationTime={animationTime} />
-                <ChildPage3 backgroundColor={backgroundColor} childPageTranslateY={childPage3TranslateY} animationTime={animationTime} pageZIndex={pageZIndex} />
+                {pageZIndex === 0 && <>
+                    <Nav backgroundColor={backgroundColor} navOpacity={navOpacity} navTransition={navTransition}>
+                        <Title onClick={undeployChildPages} titleCursor={titleCursor}>MINA</Title>
+                        <TheHr />
+                        <TheHr />
+                        <ArrowContainer arrowContainerTop={arrowContainerTop} >
+                            <DownArrow />
+                            <br />
+                            <DownArrow style={{ marginTop: "-25px" }} />
+                        </ArrowContainer>
+                        <Link2Container Link2ContainerDisplay={Link2ContainerDisplay} Link2ContainerOpacity={Link2ContainerOpacity}>
+                            <Link2 onClick={deployChildPage1} buttonColor={backgroundColor}>基本資料</Link2>
+                            <Link2 onClick={deployChildPage2} buttonColor={backgroundColor}>生平事蹟</Link2>
+                            <Link2 onClick={deployChildPage3} buttonColor={backgroundColor}>精選照片</Link2>
+                        </Link2Container>
+                    </Nav>
+                    <ChildPage1 backgroundColor={backgroundColor} childPageTranslateY={childPage1TranslateY} animationTime={animationTime} />
+                    <ChildPage2 backgroundColor={backgroundColor} childPageTranslateY={childPage2TranslateY} animationTime={animationTime} />
+                    <ChildPage3 backgroundColor={backgroundColor} childPageTranslateY={childPage3TranslateY} animationTime={animationTime} pageZIndex={pageZIndex} />
+                </>}
             </Container>
-        </>
     )
 }
 

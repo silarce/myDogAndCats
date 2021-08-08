@@ -208,7 +208,7 @@ let shouldNavExpand = true;
 // -----------------------------------------------------
 // pageZIndex除了是這個頁面的z-index外，同時也代表著佈署狀態
 // pageZIndex為2時會將heroImage與三個子頁面反佈署
-function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, animationTime }) {
+function PageWolfy({ backgroundColor, pageZIndex, animationTime }) {
 
     const [theNavCss, setTheNavCss] = useState({
         display: "none",
@@ -347,8 +347,8 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, an
     // -------------------------------------------------
 
     return (
-        <>
-            <Container onWheel={changePage}>
+        pageZIndex === 2 ? "" :
+            <Container onWheel={pageZIndex === 0 ? changePage : null}>
                 {pageZIndex === 1 && <HeroImage100Width />}
                 {pageZIndex === 0 && <>
                     <HeroImageContainer theLocation={"left"} animationTime={animationTime} heroImageZIndex={heroImageZIndex}>
@@ -374,7 +374,6 @@ function PageWolfy({ pageWidth, pagePositionTop, backgroundColor, pageZIndex, an
                     <HeroImageBlurLight heroImageZIndex={heroImageZIndex} animationTime={animationTime} theLocation={"right"} />
                 </>}
             </Container>
-        </>
     )
 }
 
