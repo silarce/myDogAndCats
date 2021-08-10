@@ -20,15 +20,4 @@ body {
   height: 100vh;
   overflow: hidden;
 }
-
-.pageBookmark {
-  font-size: 2rem;
-  cursor: pointer;
-}
-
-.test {
-  overflow: visible;
-  -webkit-transform: scale(50, 50) translate();
-          transform: scale(50, 50) translate();
-}
 /*# sourceMappingURL=index.css.map */

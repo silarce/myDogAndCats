@@ -15,7 +15,7 @@ const pageZIndexInit = {
 }
 
 function App() {
-  const [pageZIndex, setPageZIndex] = useState({...pageZIndexInit})
+  const [pageZIndex, setPageZIndex] = useState({...pageZIndexInit,show: 0})
 
   // 用來佈署page以及反佈署page
   const deployPage = (bookmarkName) => {
@@ -36,9 +36,9 @@ function App() {
   return (
     <>
       <Page animationTime={animationTime} bookmarkName="mina" pageZIndex={pageZIndex.mina} deployPage={deployPage} backgroundColor="pink" />
-      <Page animationTime={animationTime} bookmarkName="gallery" pageZIndex={pageZIndex.gallery} deployPage={deployPage} backgroundColor="white" />
+      <Page animationTime={animationTime} bookmarkName="gallery" pageZIndex={pageZIndex.gallery} deployPage={deployPage} backgroundColor="black" />
       <Page animationTime={animationTime} bookmarkName="wolfy" pageZIndex={pageZIndex.wolfy} deployPage={deployPage} backgroundColor="rgb(200, 200, 200)" />
-      <Page animationTime={animationTime} bookmarkName="show" pageZIndex={pageZIndex.show} deployPage={deployPage} backgroundColor="cornflowerblue" />
+      <Page animationTime={animationTime} bookmarkName="show" pageZIndex={pageZIndex.show} deployPage={deployPage} backgroundColor="black" />
       <Page animationTime={animationTime} bookmarkName="luna" pageZIndex={pageZIndex.luna} deployPage={deployPage} backgroundColor="#ffd890" />
 
     </>

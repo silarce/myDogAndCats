@@ -6,8 +6,7 @@
 import { useState, useEffect } from "react"
 import styled from "@emotion/styled"
 
-
-
+// 將指定資料夾的所有.jpg檔案全部匯入並以陣列的型式宣告為imgArr
 function importAllImagesWithArray(theRequireContext) {
     let images = []
     const requireContext = theRequireContext;
@@ -16,8 +15,7 @@ function importAllImagesWithArray(theRequireContext) {
 }
 const imgArr = importAllImagesWithArray(require.context("img/index_show", false, /^\.\/.*\.jpg$/))
 
-
-
+// 裝ShowBox的容器
 let ShowContainer = styled.div`
 background-color: #fff;
 width:120vh;
@@ -35,25 +33,21 @@ background-size: 120vh;
 position: absolute;
 `
 //顯示圖片用的cube
+const fadeInDuration = 5000; //淡入時間
+const fadeOutDuration = 2000; //淡出時間
 let ShowBoxCube = styled.div`
 width: 20vh;
 height: 20vh;
-background-color: rgba(255, 255, 255, 1);
 background-size: 120vh;
-background-position:${(props) => { return (props.theStyle.positionX) }} ${(props) => { return (props.theStyle.positionY) }};
-opacity:${(props) => { return props.theStyle.opacity }};
-background-image:${props => props.theStyle.backgroundImage};
-transition:${props => props.theStyle.transition};
+background-position:${({ position }) => position};
+opacity:${({ fade }) => fade ? 1 : 0};
+background-image:${({ backgroundImage }) => backgroundImage};
+transition:${({ fade }) => fade ? fadeInDuration : fadeOutDuration}ms, background-image 0ms;
+transition-delay:${({ transitionDelay }) => transitionDelay}ms;
 `
 
-//產生24個<ShowBoxCube/>並且依照位置設定background-postion與opacity還有className
-function photoCube(num, cubeState) {
-    let cubeClass;
-    if (num === 1) {
-        cubeClass = "ShowBox1Cube";
-    } else {
-        cubeClass = "ShowBox2Cube";
-    }
+//產生24個<ShowBoxCube/>並且依照位置設定background-postion與必要的props
+function photoCube(cubeState, transitionDelayArr) {
     let cubeArr = [];
     let i;
     let j = 6;
@@ -65,167 +59,97 @@ function photoCube(num, cubeState) {
         positionX = `${j * 20}vh`
         positionY = `${k * 20}vh`
         j--
-        cubeArr.push(<ShowBoxCube className={cubeClass} key={i}
-            theStyle={{
-                positionX: positionX,
-                positionY: positionY,
-                ...cubeState[i]
-            }}
+        cubeArr.push(<ShowBoxCube key={i}
+            position={`${positionX} ${positionY}`}
+            fade={cubeState.fade}
+            backgroundImage={cubeState.backgroundImage}
+            transitionDelay={transitionDelayArr[i]}
         />)
     }
     return cubeArr;
 }
 
-
-
-//cubeState陣列  每一個cube都會對應到cube1StateArr中的一個物件，作為其專屬的state
-//這個專屬的state物件內容為backgroundImage、opacity、transition這三項CSS
-//如果為每一個cube進行一次useState太麻煩了，所以才把每個cube的動態css裝進陣列後再用useState
-let cube1StateArr = []
-let cube2StateArr = []
-//cube陣列style的初始值
-for (let i = 0; i < 24; i++) {
-    cube1StateArr[i] = { backgroundImage: `url(${imgArr[0]})`, opacity: 0, transition: "0s" }
-    cube2StateArr[i] = { backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)", opacity: 1, transition: "0s" }
+//洗牌演算法
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+        const rand = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[rand]] = [arr[rand], arr[i]];
+    }
+    return arr;
 }
-
+// transitionDelay陣列，在之後的每一次迭代都要亂數排序一次
+// 然後代入setTransitionDelayArr()執行，這樣就能亂數改變方塊變動的順序
+const transitionDelayArrInit = []
+const transitionDelayUnit = 200; // 每一個cube淡近淡出的間隔時間，單位為ms
+for (let i = 0; i < 24; i++) {
+    transitionDelayArrInit[i] = transitionDelayUnit * (i + 1)
+}
+// 將transitionDelayArrInit亂數排序，之後代入下面的useState
+shuffle(transitionDelayArrInit);
 
 function SlideShow() {
-    // cube陣列的state陣列
-    let [cube1State, setCube1State] = useState(cube1StateArr);
-    let [cube2State, setCube2State] = useState(cube2StateArr);
-    // 生成cube陣列並將state陣列作為引數放進去，以建立Style
-    // 之後只要改變state就能改變cube的style
-    let cubeArr1 = photoCube(1, cube1State);
-    let cubeArr2 = photoCube(2, cube2State);
-
-
-    useEffect(() => { //為避免setInterval多次被呼叫，使用useEffect
-        // 這是cubeStateArr的Index的Arr,內容為[1,2,3,4,5,6,7.......]
-        // 用來隨機選取cube同時避免選到選過的cube
-        let cubeStateArrIndexArr = [];
-        for (let i = 0; i < cube1StateArr.length; i++) {
-            cubeStateArrIndexArr.push(i)
+    // cube陣列的state
+    // fade為false會淡出，為true會淡入
+    const [cube1State, setCube1State] = useState({ fade: false, backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)" });
+    const [cube2State, setCube2State] = useState({ fade: true, backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)" });
+    // 上下層每一個cube都會依據自身的index代入transitionDelayArr[index]，這樣就能使不同層同一個位置cube的transition-delay一樣
+    const [transitionDelayArr, setTransitionDelayArr] = useState(transitionDelayArrInit)
+    
+    // 生成圖片方塊，也就是cube
+    const cubeArr1 = photoCube(cube1State, transitionDelayArr); //下層
+    const cubeArr2 = photoCube(cube2State, transitionDelayArr); //上層
+    // 每一次迭代的間隔時間
+    // 24 * 200 + 5000 + 1000， 最後一個值可以隨意調整，最好不要為負數，不然在cube淡入完之前就會開始下一次迭代
+    const iterationDelay = transitionDelayArr.length * transitionDelayUnit + fadeInDuration + 1000; 
+    
+    useEffect(() => {
+        let imageChoosed = [999, 999, 999, 999] //用來紀錄剛剛選過的四個圖片，避免在四個迭代內出現同樣的圖片
+        let newImg;
+        // 選擇新圖片
+        const chooseImage = () => {
+            newImg = Math.floor(Math.random() * imgArr.length);
+            //如果選到的圖片跟imageChoosed一樣，就再選一次，直到選到不一樣的
+            if (imageChoosed.includes(newImg)) { chooseImage() } else { 
+                imageChoosed.unshift(newImg); //將這次選到的圖片放進imageChoosed，使其暫時不能再次被選到
+                imageChoosed.pop(); //將最舊的圖片移出imageChoosed，使其可以被選到
+            }
         }
-        let [...cubeStateArrIndexArrCopy] = cubeStateArrIndexArr; //cubeStateArrIndexArr的副本，方便開始新循環
-
-        //第一次循環的值，上層不透明化，下層透明化，與建立cubeArr時的初始值相比，改變了opacity與transition
-        let Cube1Style = { backgroundImage: `url(${imgArr[0]})`, opacity: 1, transition: "5s" }
-        let Cube2Style = { backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)", opacity: 0, transition: "2s" }
-
-        // 用來避免選到同樣圖片用的變數
-        let imgRenew;
-        let oldImg;
-        let oldOldImg;
-        let oldOldOldImg;
-        let oldOldOldOldImg;
-
-        let intervalId; //將intervalId在showStart外面宣告，使useEffect最後return callBack時可以使用這個變數
-
-        let showStart = () => {
-            intervalId = setInterval(() => {
-                //根據cubeStateArrIndexArr的長度隨機選取一個index
-                let cubeStateArrIndex = Math.floor(Math.random() * cubeStateArrIndexArr.length)
-                //根據上面選取的Index取出該值(item)，並且把該item去掉，這樣就能避免選到同一個值
-                let theIndex = cubeStateArrIndexArr.splice(cubeStateArrIndex, 1)[0]
-                //改變state，逐一改變cube的透明度
-                setCube1State((pre) => {
-                    pre[theIndex] = { ...Cube1Style };
-                    return { ...pre }
-                })
-                setCube2State((pre) => {
-                    pre[theIndex] = { ...Cube2Style };
-                    return { ...pre }
-                })
-
-                // 當cubeStateArrIndexArr.length為0的時候，這次的循環結束
-                // 並更動數值後進行下一次循環
-                if (cubeStateArrIndexArr.length === 0) {
-                    //將cubeStateArrIndexArr回復為原本的狀態[1,2,3,4,5.....]的狀態
-                    [...cubeStateArrIndexArr] = cubeStateArrIndexArrCopy;
-
-                    //改變上下層的style，包括圖片路徑、透明度、漸變秒數
-                    // 先取得隨機圖片，為了避免取得相同的圖片，要做一些演算
-                    (function renewImg() {
-                        imgRenew = imgArr[Math.floor(Math.random() * imgArr.length)];
-                        if (imgRenew === oldImg || imgRenew === oldOldImg || imgRenew === oldOldOldImg || imgRenew === oldOldOldOldImg) {
-                            renewImg();
-                        }
-                    })();
-                    // 更新四張內被選過的照片
-                    oldOldOldOldImg = oldOldOldImg;
-                    oldOldOldImg = oldOldImg;
-                    oldOldImg = oldImg;
-                    oldImg = imgRenew;
-
-                    // // // State裡裝的是array，pre卻是物件!?，這是怎麼回事
-
-                    // 殘影的問題
-                    // 當多個setState在同一個循環被呼叫的時候，setState會被放進一個隊列並依序改變state
-                    // 當隊列中的setState都執行完了才會render，而不是一被呼叫就render。
-                    // 因此，如果同一個setState在同一循環被呼叫多次，
-                    // 那麼先被呼叫的setState所改變的值就會被後呼叫所改變的值蓋掉
-                    // 若要避免先被呼叫的setState在render之前就被後呼叫的蓋掉
-                    // 可以將後呼叫的setState包在setTimeout中，這樣就能在循環結束後才被呼叫，並開始另一個循環。
-                    // 要注意的是，setTimeout的時間不能小於循環的時間
-                    // 如果在程式跑完，要正常呼叫的setState呼叫完之前，setTimeout就時間到而呼叫了該延遲的setState
-                    // 該setState就會加入隊列並蓋掉先呼叫的setState
-
-                    // 為了避免殘影的問題，除了延遲後呼叫的setState外，我也可以提前呼叫先呼叫的setState
-                    // 而在每一輪結束後開始前都有一個空檔，這時就可以提前呼叫
-                    // 原本要根據Cube1Style.opacity === 0來判斷接著哪層會變不透明從而事先改變圖片
-                    // 但因為這邊兩秒後才會運算，這時原本為0的Cube1Style.opacity已經變成1了
-                    // 所以判斷式為Cube1Style.opacity === 1
-                    // 兩秒後才運算是因為漸變時間為兩秒，若setTimeout的時間少於兩秒，會使的圖片還沒變完就換了圖片
-                    setTimeout(() => {
-                        if (Cube1Style.opacity === 1) {
-                            setCube1State((pre) => {
-                                for (let i = 0; i < cube1State.length; i++) {
-                                    pre[i].backgroundImage = `url(${imgRenew})`
-                                }
-                                return { ...pre }
-                            })
-                        } else {
-                            setCube2State((pre) => {
-                                for (let i = 0; i < cube1State.length; i++) {
-                                    pre[i].backgroundImage = `url(${imgRenew})`
-                                }
-                                return { ...pre }
-                            })
-                        }
-                    }, 2000);
-
-                    // 改變Cube1Style與Cube2Style的內容，在下一輪根據內容改變cube1State與cube2State
-                    // 雖然用if可以判斷一次就好，但是可讀性較差，行數也變為兩倍，所以決定還是用三元運算子
-                    Cube1Style = {
-                        backgroundImage: Cube1Style.opacity === 0 ? `url(${imgRenew})` : Cube1Style.backgroundImage,
-                        opacity: Cube1Style.opacity === 0 ? 1 : 0,
-                        transition: Cube1Style.opacity === 0 ? "5s" : "2s"
-                    }
-                    Cube2Style = {
-                        backgroundImage: Cube2Style.opacity === 0 ? `url(${imgRenew})` : Cube2Style.backgroundImage,
-                        opacity: Cube2Style.opacity === 0 ? 1 : 0,
-                        transition: Cube2Style.opacity === 0 ? "5s" : "2s"
-                    }
-                    // 結束這一輪循環
-                    clearInterval(intervalId)
-                    // 6秒後開始下一輪循環
-                    setTimeout(() => {
-                        showStart();
-                    }, 6000);
+        // 改變狀態使上下層交替淡入與淡出，淡入層會改變圖片
+        const changeImage = () => {
+            chooseImage();
+            setTransitionDelayArr(shuffle(transitionDelayArrInit))
+            setCube1State((preState) => {
+                return {
+                    fade: !preState.fade,
+                    backgroundImage: preState.fade ? preState.backgroundImage : `url(${imgArr[newImg]})`
                 }
-            }, 200);
+            })
+            setCube2State((preState) => {
+                return {
+                    fade: !preState.fade,
+                    backgroundImage: preState.fade ? preState.backgroundImage : `url(${imgArr[newImg]})`
+                }
+            })
         }
-        showStart()
-
+        // 第一次執行changeImage
+        // 在卸載這個slideShow(也就是這個元件)後再裝載時，時常會出現BUG，
+        // BUG為，第一次迭代時，照片就全顯現、沒有淡入淡出的動畫
+        // 猜測是因為初始State在導入並改變DOM元素之前就setState，
+        // 使的DOM元素的初始css直接導入了漸變後的state，就不會漸變了
+        // 使用setTimeout()延遲呼叫changeImage()就能避免這樣的問題
+        setTimeout(() => {
+            changeImage();
+        }, 100);
+        // 每iterationDelay毫秒呼叫一次changeImage()
+        let intervalId = setInterval(() => {
+            changeImage();
+        }, iterationDelay)
+        
         return () => {
-            clearInterval(intervalId)
+            // 卸載時清除interval
+            clearInterval(intervalId);
         }
-    }, [cube1State.length]) // 系統警告我要把cube1State.length放進去，不知道為什麼
-
-
-
-
+    }, [iterationDelay])
 
     return (
         <>
@@ -237,8 +161,6 @@ function SlideShow() {
                     {cubeArr2}
                 </ShowBox>
             </ShowContainer>
-
-
         </>
     )
 }

@@ -20,10 +20,7 @@ height:100%;
 z-index:0;
 `
 const heroImageBackgroundMoveAnimation = keyframes`
-from{
-    background-position-x: 0% ;
-}
-50%{
+from,60%{
     background-position-x: 0% ;
 }
 to{

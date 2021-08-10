@@ -1,7 +1,7 @@
 // 為了開發方便，開發時會將一個useEffect註解掉
 // 開發結束後要調回來
 
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
@@ -10,23 +10,28 @@ const PageWolfy = lazy(() => { return import("./childComponents/pageWolfy.jsx") 
 const PageLuna = lazy(() => { return import("./childComponents/pageLuna.jsx") })
 const PageShow = lazy(() => { return import("./childComponents/pageShow.jsx") })
 
-const deployAnimation = (theName) => keyframes`
+const deployAnimation = (theName) => {
+    return theName === "mina" || theName === "luna" || theName === "wolfy" ?
+        keyframes`
     from{
         width:20vw;
         transform:translate(0vw, 0vh);
     }
-    50%{
+    60%{
         width:20vw;;
         transform:translate(0vw, 100vh);
     }
     to{
         width:100vw;
         transform:translate(${theName === "mina" ? 0 :
-        theName === "gallery" ? -20 :
-            theName === "wolfy" ? -40 :
-                theName === "show" ? -60 : -80}vw, 100vh);
+                // theName === "gallery" ? -20 :
+                theName === "wolfy" ? -40 : -80}vw, 100vh);
     }
     `
+        : keyframes`
+    from{ transform:translate(-60vw,100vh); }
+    to{transform:translate(-60vw,100vh);}`;
+}
 const undeployAnimation = keyframes`
     from{
         transform:translate(0vw,-20vh)
@@ -37,9 +42,9 @@ const undeployAnimation = keyframes`
     `
 const Container = styled.div`
 margin:0;
-width:20vw;
+width:${({ bookmarkName }) => bookmarkName === "show" ? 100 : 20}vw;
 height:100vh;
-background-color:${props => props.backgroundColor};
+background-color:${({ backgroundColor, bookmarkName }) => bookmarkName === "show" ? "transparent" : backgroundColor};
 position:absolute;
 top:-100vh;
 left:${({ bookmarkName }) => bookmarkName === "mina" ? 0 :
@@ -47,9 +52,9 @@ left:${({ bookmarkName }) => bookmarkName === "mina" ? 0 :
             bookmarkName === "wolfy" ? 40 :
                 bookmarkName === "show" ? 60 : 80}vw;
 transform:translate(0vw, 0vh);
-z-index:${({pageZIndex}) => pageZIndex};
-animation-name:${({ pageZIndex, bookmarkName }) => pageZIndex === 1 || pageZIndex === 0 ? deployAnimation(bookmarkName) : undeployAnimation};
-animation-duration:2s;
+z-index:${({ pageZIndex }) => pageZIndex};
+animation-name:${({ pageZIndex, bookmarkName }) => pageZIndex === 2 ? undeployAnimation : deployAnimation(bookmarkName)};
+animation-duration:${({animationTime})=>animationTime}s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
 `
@@ -57,7 +62,8 @@ const PageBookmark = styled.div`
 width:20vw;
 height:3vw;
 line-height:3vw;
-background:${props => props.backgroundColor};
+background:${({ backgroundColor }) => backgroundColor};
+color:${({ backgroundColor }) => backgroundColor==="black"? "white":"black"};
 position:absolute;
 bottom:-3vw;
 border-radius: 0 0 50% 50%;
@@ -70,6 +76,7 @@ transition:0.5s;
     bottom:-5vw;
 }
 font-size:3vw;
+cursor: pointer;
 `
 
 
@@ -80,10 +87,10 @@ function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundC
     // const [containerPositionTop, setContainerPositionTop] = useState(0)
     // const [containerPositionLeft, setContainerPositionLeft] = useState(positionX)
     // let stateList = {
-        // containerWidth: containerWidth,
-        // containerPositionTop: containerPositionTop,
-        // containerPositionLeft: containerPositionLeft,
-        // containerZIndex: pageZIndex
+    // containerWidth: containerWidth,
+    // containerPositionTop: containerPositionTop,
+    // containerPositionLeft: containerPositionLeft,
+    // containerZIndex: pageZIndex
     // }
 
     // ---------------------------------------------------------------------------------------------
@@ -104,10 +111,10 @@ function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundC
     //     }
     // }, [pageZIndex, positionX])
     // ---------------------------------------------------------------------------------------------
- 
+
     return (
         <>
-            <Container pageZIndex={pageZIndex} backgroundColor={backgroundColor} bookmarkName={bookmarkName}>
+            <Container pageZIndex={pageZIndex} backgroundColor={backgroundColor} bookmarkName={bookmarkName} animationTime={animationTime}>
                 <Suspense fallback={<div>讀取中</div>}>
                     {bookmarkName === "mina" && (<PageMina backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                     {bookmarkName === "wolfy" && (<PageWolfy backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
@@ -115,9 +122,11 @@ function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundC
                     {bookmarkName === "show" && (<PageShow backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                 </Suspense>
                 <PageBookmark
-                    onClick={()=>{deployPage(bookmarkName)}}
-                    className="pageBookmark"
-                    backgroundColor={backgroundColor}>{bookmarkName.toUpperCase()}</PageBookmark>
+                    onClick={() => { deployPage(bookmarkName) }}
+                    backgroundColor={backgroundColor}
+                    pageZIndex={pageZIndex}
+                    bookmarkName={bookmarkName}
+                >{bookmarkName.toUpperCase()}</PageBookmark>
             </Container>
 
         </>

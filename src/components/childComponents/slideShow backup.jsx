@@ -6,15 +6,13 @@
 import { useState, useEffect } from "react"
 import styled from "@emotion/styled"
 
-
-
 function importAllImagesWithArray(theRequireContext) {
     let images = []
     const requireContext = theRequireContext;
     requireContext.keys().map((item, index) => { images[index] = requireContext(item).default; return "" });
     return images;
 }
-const imgArr = importAllImagesWithArray(require.context("../img/index_show", false, /^\.\/.*\.jpg$/))
+const imgArr = importAllImagesWithArray(require.context("img/index_show", false, /^\.\/.*\.jpg$/))
 
 
 
@@ -85,10 +83,9 @@ let cube1StateArr = []
 let cube2StateArr = []
 //cube陣列style的初始值
 for (let i = 0; i < 24; i++) {
-    cube1StateArr[i] = { backgroundImage: `url(${imgArr[0]})`, opacity: 0, transition: "0s" }
+    cube1StateArr[i] = { backgroundImage: `url(${imgArr[5]})`, opacity: 0, transition: "0s" }
     cube2StateArr[i] = { backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)", opacity: 1, transition: "0s" }
 }
-
 
 function SlideShow() {
     // cube陣列的state陣列
@@ -98,8 +95,7 @@ function SlideShow() {
     // 之後只要改變state就能改變cube的style
     let cubeArr1 = photoCube(1, cube1State);
     let cubeArr2 = photoCube(2, cube2State);
-
-
+    
     useEffect(() => { //為避免setInterval多次被呼叫，使用useEffect
         // 這是cubeStateArr的Index的Arr,內容為[1,2,3,4,5,6,7.......]
         // 用來隨機選取cube同時避免選到選過的cube
@@ -110,7 +106,7 @@ function SlideShow() {
         let [...cubeStateArrIndexArrCopy] = cubeStateArrIndexArr; //cubeStateArrIndexArr的副本，方便開始新循環
 
         //第一次循環的值，上層不透明化，下層透明化，與建立cubeArr時的初始值相比，改變了opacity與transition
-        let Cube1Style = { backgroundImage: `url(${imgArr[0]})`, opacity: 1, transition: "5s" }
+        let Cube1Style = { backgroundImage: `url(${imgArr[5]})`, opacity: 1, transition: "5s" }
         let Cube2Style = { backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)", opacity: 0, transition: "2s" }
 
         // 用來避免選到同樣圖片用的變數
@@ -120,7 +116,9 @@ function SlideShow() {
         let oldOldOldImg;
         let oldOldOldOldImg;
 
-        let intervalId; //將intervalId在showStart外面宣告，使useEffect最後return callBack時可以使用這個變數
+        let intervalId; //將intervalId在showStart外面宣告，使useEffec的return callBack時可以使用這個變數將setInterval清除
+        let timeoutId;  //將timeoutId在showStart外面宣告，使useEffect的return callBack時可以使用這個變數將setTimeout清除
+        let timeoutId2; //同上
 
         let showStart = () => {
             intervalId = setInterval(() => {
@@ -177,7 +175,7 @@ function SlideShow() {
                     // 但因為這邊兩秒後才會運算，這時原本為0的Cube1Style.opacity已經變成1了
                     // 所以判斷式為Cube1Style.opacity === 1
                     // 兩秒後才運算是因為漸變時間為兩秒，若setTimeout的時間少於兩秒，會使的圖片還沒變完就換了圖片
-                    setTimeout(() => {
+                    timeoutId =  setTimeout(() => {
                         if (Cube1Style.opacity === 1) {
                             setCube1State((pre) => {
                                 for (let i = 0; i < cube1State.length; i++) {
@@ -210,7 +208,7 @@ function SlideShow() {
                     // 結束這一輪循環
                     clearInterval(intervalId)
                     // 6秒後開始下一輪循環
-                    setTimeout(() => {
+                   timeoutId2 = setTimeout(() => {
                         showStart();
                     }, 6000);
                 }
@@ -219,9 +217,11 @@ function SlideShow() {
         showStart()
 
         return () => {
-            clearInterval(intervalId)
+            clearTimeout(timeoutId);
+            clearTimeout(timeoutId2);
+            clearInterval(intervalId);
         }
-    }, [cube1State.length]) // 系統警告我要把cube1State.length放進去，不知道為什麼
+    }, [cube1State.length])
 
 
 
