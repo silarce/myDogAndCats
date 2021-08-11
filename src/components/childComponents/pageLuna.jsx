@@ -9,7 +9,7 @@ import ChildPage1 from "./lunaComponent/ChildPage1.jsx";
 import ChildPage2 from "./lunaComponent/ChildPage2.jsx";
 import ChildPage3 from "./lunaComponent/ChildPage3.jsx";
 
-import Luna_13 from "../../img/Luna_img/Luna_13.jpg";
+import Luna_13 from "../../img/Luna_img/heroImage/heroImage_luna.jpg";
 
 
 const Container = styled.div`
@@ -127,12 +127,14 @@ background-color:transparent;
 // -----------------------------------------------------
 // 這兩個組件是導覽列下緣的兩個下箭頭符號(很平的下箭頭)
 const ArrowContainer = styled.div`
+width:20vw;
 text-align: center;
 margin-top: -13px;
 position:relative;
 transition:1s;
 top:13vw;
 top:${({ arrowContainerTop }) => arrowContainerTop}vw;
+overflow:hidden;
 `
 const DownArrow = styled(ArrowIosDownward)`
 width:1vw;

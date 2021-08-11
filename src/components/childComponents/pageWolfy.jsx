@@ -9,7 +9,7 @@ import ChildPage1 from "./wolfyComponent/ChildPage1.jsx";
 import ChildPage2 from "./wolfyComponent/ChildPage2.jsx";
 import ChildPage3 from "./wolfyComponent/ChildPage3.jsx";
 
-import wolfy_4 from "../../img/Wolfy_img/Wolfy_4.jpg";
+import wolfy_4 from "../../img/Wolfy_img/heroImage/heroImage_wolfy.jpg";
 
 
 const Container = styled.div`

@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
 const PageMina = lazy(() => { return import("./childComponents/pageMina.jsx") })
+const PageGallery = lazy(() => { return import("./childComponents/pageGallery.jsx") })
 const PageWolfy = lazy(() => { return import("./childComponents/pageWolfy.jsx") })
 const PageLuna = lazy(() => { return import("./childComponents/pageLuna.jsx") })
 const PageShow = lazy(() => { return import("./childComponents/pageShow.jsx") })
@@ -24,13 +25,15 @@ const deployAnimation = (theName) => {
     to{
         width:100vw;
         transform:translate(${theName === "mina" ? 0 :
-                // theName === "gallery" ? -20 :
                 theName === "wolfy" ? -40 : -80}vw, 100vh);
     }
     `
-        : keyframes`
+        : theName === "show" ? keyframes`
     from{ transform:translate(-60vw,100vh); }
-    to{transform:translate(-60vw,100vh);}`;
+    to{transform:translate(-60vw,100vh);}`
+            : keyframes`
+    from{ transform:translate(-20vw,100vh); }
+    to{transform:translate(-20vw,100vh);}`
 }
 const undeployAnimation = keyframes`
     from{
@@ -42,7 +45,7 @@ const undeployAnimation = keyframes`
     `
 const Container = styled.div`
 margin:0;
-width:${({ bookmarkName }) => bookmarkName === "show" ? 100 : 20}vw;
+width:${({ bookmarkName }) => bookmarkName === "show" || bookmarkName === "gallery" ? 100 : 20}vw;
 height:100vh;
 background-color:${({ backgroundColor, bookmarkName }) => bookmarkName === "show" ? "transparent" : backgroundColor};
 position:absolute;
@@ -54,7 +57,7 @@ left:${({ bookmarkName }) => bookmarkName === "mina" ? 0 :
 transform:translate(0vw, 0vh);
 z-index:${({ pageZIndex }) => pageZIndex};
 animation-name:${({ pageZIndex, bookmarkName }) => pageZIndex === 2 ? undeployAnimation : deployAnimation(bookmarkName)};
-animation-duration:${({animationTime})=>animationTime}s;
+animation-duration:${({ animationTime }) => animationTime}s;
 animation-fill-mode: forwards;
 animation-timing-function:linear;
 `
@@ -63,7 +66,7 @@ width:20vw;
 height:3vw;
 line-height:3vw;
 background:${({ backgroundColor }) => backgroundColor};
-color:${({ backgroundColor }) => backgroundColor==="black"? "white":"black"};
+color:${({ backgroundColor }) => backgroundColor === "black" ? "white" : "black"};
 position:absolute;
 bottom:-3vw;
 border-radius: 0 0 50% 50%;
@@ -117,6 +120,7 @@ function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundC
             <Container pageZIndex={pageZIndex} backgroundColor={backgroundColor} bookmarkName={bookmarkName} animationTime={animationTime}>
                 <Suspense fallback={<div>讀取中</div>}>
                     {bookmarkName === "mina" && (<PageMina backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
+                    {bookmarkName === "gallery" && (<PageGallery backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                     {bookmarkName === "wolfy" && (<PageWolfy backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                     {bookmarkName === "luna" && (<PageLuna backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
                     {bookmarkName === "show" && (<PageShow backgroundColor={backgroundColor} pageZIndex={pageZIndex} animationTime={animationTime} />)}
