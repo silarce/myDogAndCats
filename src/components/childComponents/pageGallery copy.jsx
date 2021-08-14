@@ -84,7 +84,14 @@ border-radius:30px;
 overflow:hidden;
 `
 const PhotoQueueBox = styled.div`
-
+width:10vw;
+height:100%;
+position:absolute;
+left:50%;
+transform:translateX(${({ photoQueueBoxTranslateX }) => photoQueueBoxTranslateX}%);
+background-color:blue;
+border-radius:30px;
+transition:${({ photoQueueBoxTransition }) => photoQueueBoxTransition}s;
 `
 
 //用來呈現淡出效果
@@ -110,6 +117,7 @@ height:100%;
 background-color:black;
 object-fit:contain;
 border-radius:30px;
+// opacity:0;
 `
 // const Photo = styled.img`
 // display:inline-block;
@@ -161,25 +169,27 @@ cursor:pointer;
 
 
 const queueMoveTime = 0.5;
+const photoQueueBoxMoveTime = 1;
 let moveSwitch = true;
 
-function PageShow({ pageZIndex, animationTime }) {
 
-    const [photoQueueMinaTranslateY, setPhotoQueueMinaTranslateY] = useState(-50)
-    const [photoQueueMinaTransition, setPhotoQueueMinaTransition] = useState(queueMoveTime)
+function PageShow({ pageZIndex, animationTime }) {
+    const [photoQueueBoxTranslateX, setPhotoQueueBoxTranslateX] = useState(0)
+    const [photoQueueBoxTransition, setPhotoQueueBoxTransition] = useState(photoQueueBoxMoveTime)
 
     const [photoQueueWolfyTranslateY, setPhotoQueueWolfyTranslateY] = useState(-50)
     const [photoQueueWolfyTransition, setPhotoQueueWolfyTransition] = useState(queueMoveTime)
-
-    const [photoQueueLunaTranslateY, setPhotoQueueLunaTranslateY] = useState(-50)
-    const [photoQueueLunaTransition, setPhotoQueueLunaTransition] = useState(queueMoveTime)
 
     const [imgMinaArr, setImgMinaArr] = useState(imgMinaArrInit)
     const [imgWolfyArr, setImgWolfyArr] = useState(imgWolfyArrInit)
     const [imgLunaArr, setImgLunaArr] = useState(imgLunaArrInit)
 
-    const imgArrArr = [imgMinaArrInit,imgWolfyArrInit,imgLunaArrInit];
+    const imgArrArr = [imgMinaArr, imgWolfyArr, imgLunaArr];
+    const setImgArrArr=[setImgMinaArr, setImgWolfyArr, setImgLunaArr];
 
+    const [photoQueueLeftImgArrIndex,setPhotoQueueLeftImgArrIndex] = useState(0)
+    const [photoQueueRightImgArrIndex,setPhotoQueueRightImgArrIndex] = useState(1)
+    
 
 
 
@@ -219,24 +229,66 @@ function PageShow({ pageZIndex, animationTime }) {
         }, queueMoveTime * 1000);
     }
 
+    
+    const slideLeft = () => {
+        if (!moveSwitch) return;
+        moveSwitch = false
+        setPhotoQueueBoxTranslateX(-100)
+        setPhotoQueueBoxTransition(photoQueueBoxMoveTime)
+        setTimeout(() => {
+            setPhotoQueueBoxTranslateX(0)
+            setPhotoQueueBoxTransition(0)
+            setPhotoQueueLeftImgArrIndex(photoQueueRightImgArrIndex)
+            setPhotoQueueRightImgArrIndex((preState)=> preState === 2? 0:preState+1)
+            moveSwitch = true;
+        }, photoQueueBoxMoveTime * 1000);
+    }
+    const slideRight = () => {
+        if (!moveSwitch) return;
+        moveSwitch = false
+        setPhotoQueueBoxTranslateX(-100);
+        setPhotoQueueBoxTransition(0);
+        setPhotoQueueLeftImgArrIndex((preState)=> preState === 0? 2:preState-1)
+        setPhotoQueueRightImgArrIndex(photoQueueLeftImgArrIndex);
+        setTimeout(() => {
+            setPhotoQueueBoxTranslateX(0)
+            setPhotoQueueBoxTransition(1)
+        }, 0);
+        setTimeout(() => {
+            moveSwitch = true; 
+        }, photoQueueBoxMoveTime * 1000);
+    }
+
+
     return (
         pageZIndex === 2 ? null :
             <Container>
                 <FakeBookmark pageZIndex={pageZIndex} animationTime={animationTime}>GALLERY</FakeBookmark>
                 <SubContainer>
                     <PhotoSelector >
-                        <PhotoQueue imgArr={imgWolfyArr} cssTranslateY={photoQueueWolfyTranslateY} cssTransition={photoQueueWolfyTransition} />
-                        {/* <PhotoQueue imgArr={imgMinaArr} cssTranslateY={photoQueueMinaTranslateY} cssTransition={photoQueueMinaTransition} /> */}
-                   
+                        <PhotoQueueBox photoQueueBoxTranslateX={photoQueueBoxTranslateX} photoQueueBoxTransition={photoQueueBoxTransition}>
+                            <PhotoQueue imgArr={imgArrArr[photoQueueLeftImgArrIndex]}
+                                location="left"
+                                cssTranslateY={photoQueueWolfyTranslateY}
+                                // cssTranslateX={-175}
+                                cssTransition={photoQueueWolfyTransition}
+                            />
+                            <PhotoQueue imgArr={imgArrArr[photoQueueRightImgArrIndex]}
+                                location="right"
+                                cssTranslateY={photoQueueWolfyTranslateY}
+                                // cssTranslateX={-50}
+                                cssTransition={photoQueueWolfyTransition}
+                            />
+                        </PhotoQueueBox>
                         <PhotoQueueFadeBlock />
                         <ArrowUp onClick={slideUp} />
                         <ArrowDown onClick={slideDown} />
-                        <ArrowLeft />
-                        <ArrowRight />
+                        <ArrowLeft onClick={slideRight} />
+                        <ArrowRight onClick={slideLeft} />
                     </PhotoSelector>
 
                     <Photo />
-                    {/* <Photo  /> */}
+
                 </SubContainer>
             </Container>
     )

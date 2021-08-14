@@ -89,9 +89,9 @@ height:100%;
 position:absolute;
 left:50%;
 transform:translateX(${({ photoQueueBoxTranslateX }) => photoQueueBoxTranslateX}%);
-background-color:blue;
 border-radius:30px;
 transition:${({ photoQueueBoxTransition }) => photoQueueBoxTransition}s;
+transition-timing-function: linear;
 `
 
 //用來呈現淡出效果
@@ -185,9 +185,11 @@ function PageShow({ pageZIndex, animationTime }) {
     const [imgLunaArr, setImgLunaArr] = useState(imgLunaArrInit)
 
     const imgArrArr = [imgMinaArr, imgWolfyArr, imgLunaArr];
+    const setImgArrArr=[setImgMinaArr, setImgWolfyArr, setImgLunaArr];
+
     const [photoQueueLeftImgArrIndex,setPhotoQueueLeftImgArrIndex] = useState(0)
     const [photoQueueRightImgArrIndex,setPhotoQueueRightImgArrIndex] = useState(1)
-
+    
 
 
 
@@ -199,7 +201,7 @@ function PageShow({ pageZIndex, animationTime }) {
         setPhotoQueueWolfyTransition(queueMoveTime)
 
         setTimeout(() => {
-            setImgWolfyArr((preState) => {
+            setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
                 preState.unshift(preState[preState.length - 1])
                 preState.pop();
                 return [...preState]
@@ -216,7 +218,7 @@ function PageShow({ pageZIndex, animationTime }) {
         setPhotoQueueWolfyTransition(queueMoveTime)
 
         setTimeout(() => {
-            setImgWolfyArr((preState) => {
+            setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
                 preState.push(preState[0])
                 preState.shift();
                 return [...preState]
