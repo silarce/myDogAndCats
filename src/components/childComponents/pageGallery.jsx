@@ -10,6 +10,9 @@ import { LeftArrow } from "@emotion-icons/boxicons-solid/LeftArrow";
 import { RightArrow } from "@emotion-icons/boxicons-solid/RightArrow";
 
 
+
+
+
 // 將指定資料夾的所有.jpg檔案全部匯入並以陣列的型式宣告為imgArr
 function importAllImagesWithArray(theRequireContext) {
     let images = []
@@ -20,6 +23,12 @@ function importAllImagesWithArray(theRequireContext) {
 const imgMinaArrInit = importAllImagesWithArray(require.context("img/thumbnail/mina", false, /^\.\/.*\.jpg$/))
 const imgWolfyArrInit = importAllImagesWithArray(require.context("img/thumbnail/wolfy", false, /^\.\/.*\.jpg$/))
 const imgLunaArrInit = importAllImagesWithArray(require.context("img/thumbnail/luna", false, /^\.\/.*\.jpg$/))
+
+const bigImgMinaArrInit = importAllImagesWithArray(require.context("img/Mina_img", false, /^\.\/.*\.jpg$/))
+const bigImgWolfyArrInit = importAllImagesWithArray(require.context("img/Wolfy_img", false, /^\.\/.*\.jpg$/))
+const bigImgLunaArrInit = importAllImagesWithArray(require.context("img/Luna_img", false, /^\.\/.*\.jpg$/))
+
+
 
 const Container = styled.div`
 width:100%;
@@ -92,6 +101,7 @@ transform:translateX(${({ photoQueueBoxTranslateX }) => photoQueueBoxTranslateX}
 border-radius:30px;
 transition:${({ photoQueueBoxTransition }) => photoQueueBoxTransition}s;
 transition-timing-function: linear;
+cursor:pointer;
 `
 
 //用來呈現淡出效果
@@ -108,16 +118,17 @@ background-image: linear-gradient(
      rgba(200,200,200,0) 10%,
      rgba(200,200,200,0) 90%,
      rgba(200,200,200,1) 100%
-     )
+     );
+pointer-events: none;
 `
-const Photo = styled.div`
+const Photo = styled.img`
 display:inline-block;
 width:78%;
 height:100%;
 background-color:black;
 object-fit:contain;
+object-position:center;
 border-radius:30px;
-// opacity:0;
 `
 // const Photo = styled.img`
 // display:inline-block;
@@ -168,28 +179,39 @@ cursor:pointer;
 
 
 
-const queueMoveTime = 0.5;
-const photoQueueBoxMoveTime = 1;
+const queueMoveTime = 0.4; //縮圖列上下移動的速度
+const photoQueueBoxMoveTime = 0.4; //縮圖列左右移動的速度
 let moveSwitch = true;
+let wheelLastTriggerTime = new Date; //滑鼠滾輪節流用變數，每次觸發scrollPhotoQueue()就會更新
 
 
 function PageShow({ pageZIndex, animationTime }) {
     const [photoQueueBoxTranslateX, setPhotoQueueBoxTranslateX] = useState(0)
     const [photoQueueBoxTransition, setPhotoQueueBoxTransition] = useState(photoQueueBoxMoveTime)
 
-    const [photoQueueWolfyTranslateY, setPhotoQueueWolfyTranslateY] = useState(-50)
-    const [photoQueueWolfyTransition, setPhotoQueueWolfyTransition] = useState(queueMoveTime)
+    const [photoQueueTranslateY, setPhotoQueueTranslateY] = useState(-50)
+    const [photoQueueTransition, setPhotoQueueTransition] = useState(queueMoveTime)
 
     const [imgMinaArr, setImgMinaArr] = useState(imgMinaArrInit)
     const [imgWolfyArr, setImgWolfyArr] = useState(imgWolfyArrInit)
     const [imgLunaArr, setImgLunaArr] = useState(imgLunaArrInit)
 
     const imgArrArr = [imgMinaArr, imgWolfyArr, imgLunaArr];
-    const setImgArrArr=[setImgMinaArr, setImgWolfyArr, setImgLunaArr];
+    const setImgArrArr = [setImgMinaArr, setImgWolfyArr, setImgLunaArr];
 
-    const [photoQueueLeftImgArrIndex,setPhotoQueueLeftImgArrIndex] = useState(0)
-    const [photoQueueRightImgArrIndex,setPhotoQueueRightImgArrIndex] = useState(1)
-    
+    const [photoQueueLeftImgArrIndex, setPhotoQueueLeftImgArrIndex] = useState(0)
+    const [photoQueueRightImgArrIndex, setPhotoQueueRightImgArrIndex] = useState(1)
+
+    const [bigImgMinaArr, setBitImgMinaArr] = useState(bigImgMinaArrInit)
+    const [bigImgWolfyArr, setBitImgWolfyArr] = useState(bigImgWolfyArrInit)
+    const [bigImgLunaArr, setBitImgLunaArr] = useState(bigImgLunaArrInit)
+
+    const bigImgArrArr = [bigImgMinaArr, bigImgWolfyArr, bigImgLunaArr];
+    const setBigImgArrArr = [setBitImgMinaArr, setBitImgWolfyArr, setBitImgLunaArr];
+
+    const [bigPhotoSrc, setBigPhotoSrc] = useState(bigImgMinaArr[3]);
+
+    // console.log(bigImgArrArr[photoQueueLeftImgArrIndex])
 
 
 
@@ -197,8 +219,8 @@ function PageShow({ pageZIndex, animationTime }) {
     const slideDown = () => {
         if (!moveSwitch) return;
         moveSwitch = false
-        setPhotoQueueWolfyTranslateY(photoQueueWolfyTranslateY + 25);
-        setPhotoQueueWolfyTransition(queueMoveTime)
+        setPhotoQueueTranslateY(photoQueueTranslateY + 25);
+        setPhotoQueueTransition(queueMoveTime)
 
         setTimeout(() => {
             setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
@@ -206,16 +228,21 @@ function PageShow({ pageZIndex, animationTime }) {
                 preState.pop();
                 return [...preState]
             })
-            setPhotoQueueWolfyTranslateY(-50);
-            setPhotoQueueWolfyTransition(0)
+            setBigImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
+                preState.unshift(preState[preState.length - 1])
+                preState.pop();
+                return [...preState]
+            })
+            setPhotoQueueTranslateY(-50);
+            setPhotoQueueTransition(0)
             moveSwitch = true;
         }, queueMoveTime * 1000);
     }
     const slideUp = () => {
         if (!moveSwitch) return;
         moveSwitch = false
-        setPhotoQueueWolfyTranslateY(-75);
-        setPhotoQueueWolfyTransition(queueMoveTime)
+        setPhotoQueueTranslateY(-75);
+        setPhotoQueueTransition(queueMoveTime)
 
         setTimeout(() => {
             setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
@@ -223,13 +250,18 @@ function PageShow({ pageZIndex, animationTime }) {
                 preState.shift();
                 return [...preState]
             })
-            setPhotoQueueWolfyTranslateY(-50);
-            setPhotoQueueWolfyTransition(0)
+            setBigImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
+                preState.push(preState[0])
+                preState.shift();
+                return [...preState]
+            })
+            setPhotoQueueTranslateY(-50);
+            setPhotoQueueTransition(0)
             moveSwitch = true;
         }, queueMoveTime * 1000);
     }
 
-    
+
     const slideLeft = () => {
         if (!moveSwitch) return;
         moveSwitch = false
@@ -239,7 +271,7 @@ function PageShow({ pageZIndex, animationTime }) {
             setPhotoQueueBoxTranslateX(0)
             setPhotoQueueBoxTransition(0)
             setPhotoQueueLeftImgArrIndex(photoQueueRightImgArrIndex)
-            setPhotoQueueRightImgArrIndex((preState)=> preState === 2? 0:preState+1)
+            setPhotoQueueRightImgArrIndex((preState) => preState === 2 ? 0 : preState + 1)
             moveSwitch = true;
         }, photoQueueBoxMoveTime * 1000);
     }
@@ -248,36 +280,52 @@ function PageShow({ pageZIndex, animationTime }) {
         moveSwitch = false
         setPhotoQueueBoxTranslateX(-100);
         setPhotoQueueBoxTransition(0);
-        setPhotoQueueLeftImgArrIndex((preState)=> preState === 0? 2:preState-1)
+        setPhotoQueueLeftImgArrIndex((preState) => preState === 0 ? 2 : preState - 1)
         setPhotoQueueRightImgArrIndex(photoQueueLeftImgArrIndex);
         setTimeout(() => {
             setPhotoQueueBoxTranslateX(0)
-            setPhotoQueueBoxTransition(1)
+            setPhotoQueueBoxTransition(photoQueueBoxMoveTime)
         }, 0);
         setTimeout(() => {
-            moveSwitch = true; 
+            moveSwitch = true;
         }, photoQueueBoxMoveTime * 1000);
+    }
+
+    // 用滑鼠滾輪滾動縮圖列
+    const scrollPhotoQueue = (e) => {
+        let timeNow = new Date();
+        //加100毫秒是為了確保移動的動畫都跑完了才觸發另一個移動動畫，這麼做就不需要再加防抖機制了
+        if ((timeNow - wheelLastTriggerTime) > photoQueueBoxMoveTime * 1000+100) { 
+                if (e.deltaY > 0) {
+                    slideDown()
+                } else if (e.deltaY < 0) {
+                    slideUp()
+                }
+                wheelLastTriggerTime = new Date();
+        }
     }
 
 
     return (
         pageZIndex === 2 ? null :
-            <Container>
+            <Container onWheel={scrollPhotoQueue}>
                 <FakeBookmark pageZIndex={pageZIndex} animationTime={animationTime}>GALLERY</FakeBookmark>
                 <SubContainer>
                     <PhotoSelector >
                         <PhotoQueueBox photoQueueBoxTranslateX={photoQueueBoxTranslateX} photoQueueBoxTransition={photoQueueBoxTransition}>
                             <PhotoQueue imgArr={imgArrArr[photoQueueLeftImgArrIndex]}
+                                bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
+                                setBigPhotoSrc={setBigPhotoSrc}
                                 location="left"
-                                cssTranslateY={photoQueueWolfyTranslateY}
-                                // cssTranslateX={-175}
-                                cssTransition={photoQueueWolfyTransition}
+                                cssTranslateY={photoQueueTranslateY}
+                                cssTransition={photoQueueTransition}
                             />
                             <PhotoQueue imgArr={imgArrArr[photoQueueRightImgArrIndex]}
+                                bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
+                                setBigPhotoSrc={setBigPhotoSrc}
                                 location="right"
-                                cssTranslateY={photoQueueWolfyTranslateY}
-                                // cssTranslateX={-50}
-                                cssTransition={photoQueueWolfyTransition}
+                                cssTranslateY={photoQueueTranslateY}
+                                cssTransition={photoQueueTransition}
                             />
                         </PhotoQueueBox>
                         <PhotoQueueFadeBlock />
@@ -287,7 +335,7 @@ function PageShow({ pageZIndex, animationTime }) {
                         <ArrowRight onClick={slideLeft} />
                     </PhotoSelector>
 
-                    <Photo />
+                    <Photo src={bigPhotoSrc} />
 
                 </SubContainer>
             </Container>

@@ -89,9 +89,9 @@ height:100%;
 position:absolute;
 left:50%;
 transform:translateX(${({ photoQueueBoxTranslateX }) => photoQueueBoxTranslateX}%);
-background-color:blue;
 border-radius:30px;
 transition:${({ photoQueueBoxTransition }) => photoQueueBoxTransition}s;
+transition-timing-function: linear;
 `
 
 //用來呈現淡出效果
@@ -110,14 +110,13 @@ background-image: linear-gradient(
      rgba(200,200,200,1) 100%
      )
 `
-const Photo = styled.div`
+const Photo = styled.img`
 display:inline-block;
 width:78%;
 height:100%;
 background-color:black;
 object-fit:contain;
 border-radius:30px;
-// opacity:0;
 `
 // const Photo = styled.img`
 // display:inline-block;
@@ -169,7 +168,7 @@ cursor:pointer;
 
 
 const queueMoveTime = 0.5;
-const photoQueueBoxMoveTime = 1;
+const photoQueueBoxMoveTime = 0.5;
 let moveSwitch = true;
 
 
@@ -201,7 +200,7 @@ function PageShow({ pageZIndex, animationTime }) {
         setPhotoQueueWolfyTransition(queueMoveTime)
 
         setTimeout(() => {
-            setImgWolfyArr((preState) => {
+            setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
                 preState.unshift(preState[preState.length - 1])
                 preState.pop();
                 return [...preState]
@@ -218,7 +217,7 @@ function PageShow({ pageZIndex, animationTime }) {
         setPhotoQueueWolfyTransition(queueMoveTime)
 
         setTimeout(() => {
-            setImgWolfyArr((preState) => {
+            setImgArrArr[photoQueueLeftImgArrIndex]((preState) => {
                 preState.push(preState[0])
                 preState.shift();
                 return [...preState]
@@ -252,7 +251,7 @@ function PageShow({ pageZIndex, animationTime }) {
         setPhotoQueueRightImgArrIndex(photoQueueLeftImgArrIndex);
         setTimeout(() => {
             setPhotoQueueBoxTranslateX(0)
-            setPhotoQueueBoxTransition(1)
+            setPhotoQueueBoxTransition(photoQueueBoxMoveTime)
         }, 0);
         setTimeout(() => {
             moveSwitch = true; 
@@ -287,7 +286,7 @@ function PageShow({ pageZIndex, animationTime }) {
                         <ArrowRight onClick={slideLeft} />
                     </PhotoSelector>
 
-                    <Photo />
+                    <Photo src={imgArrArr[0][0]} />
 
                 </SubContainer>
             </Container>
