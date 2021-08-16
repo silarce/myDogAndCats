@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
@@ -8,9 +8,6 @@ import { UpArrow } from "@emotion-icons/boxicons-solid/UpArrow";
 import { DownArrow } from "@emotion-icons/boxicons-solid/DownArrow";
 import { LeftArrow } from "@emotion-icons/boxicons-solid/LeftArrow";
 import { RightArrow } from "@emotion-icons/boxicons-solid/RightArrow";
-
-
-
 
 
 // 將指定資料夾的所有.jpg檔案全部匯入並以陣列的型式宣告為imgArr
@@ -29,7 +26,6 @@ const bigImgWolfyArrInit = importAllImagesWithArray(require.context("img/Wolfy_i
 const bigImgLunaArrInit = importAllImagesWithArray(require.context("img/Luna_img", false, /^\.\/.*\.jpg$/))
 
 
-
 const Container = styled.div`
 width:100%;
 height:100%;
@@ -39,7 +35,11 @@ left:50%;
 transform:translate(-50%,-50%);
 overflow:hidden;
 z-index:0;
-background-color:black;
+`
+const WhiteBackground = styled.div`
+width:100%;
+height:100%;
+background-color:white;
 `
 const SubContainer = styled.div`
 width:60vw;
@@ -49,19 +49,47 @@ bottom:0%;
 left:50%;
 transform:translateX(-50%);
 margin:auto auto 7vh auto;
-background-color:#f9f9f9;
+background-color:#999;
 border-radius:30px;
 padding:1vw;
 `
-
-const fakeBookmarkAnimation = keyframes`
+// background-color:#f9f9f9;
+const shadowDeployAnimation = keyframes`
 from{
-opacity:1
+    width:1px;
+    height:1px;
+    box-shadow:  0px 0px 400px 0vw #000000,inset 0px 0px 400px 65vw #000000;
+}
+66%{
+    width:1px;
+    height:1px;
+    box-shadow:  0px 0px 400px 65vw #000000,inset 0px 0px 400px 65vw #000000;
+}
+66.66%{
+    width:110vw;
+    height:110vw;
+    box-shadow:  0px 0px 400px 65vw #000000,inset 0px 0px 400px 65vw #000000;
 }
 to{
-opacity:0;
-display:none;
+    width:110vw;
+    height:110vw;
+    box-shadow:  0px 0px 400px 65vw #000000,inset 0px 0px 400px 10vw #000000;
 }
+`
+const ShadowBlock = styled.div`
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%) ;
+width:1vw;
+height:1vw;
+border-radius:50%;
+box-shadow:  0px 0px 400px 65vw #000000,inset 0px 0px 400px 65vw #000000;
+animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : shadowDeployAnimation};
+animation-duration:${({ animationTime }) => animationTime + 1}s;
+animation-fill-mode:forwards;
+animation-timing-function:linear;
+pointer-events: none;
 `
 const FakeBookmark = styled.div`
 width:20vw;
@@ -70,25 +98,20 @@ position:absolute;
 left:20vw;
 top:0;
 background:white;
-color:black;
+font-size:3vw;
 line-height:5vw;
 text-align:center;
-font-size:3vw;
+font-family:times new roman;
+color:black;
 border-radius: 0 0 50% 50%;
-cursor: pointer;
-// animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : fakeBookmarkAnimation};
-// animation-duration:${({ animationTime }) => animationTime + 1}s;
-// animation-fill-mode:forwards;
-// animation-timing-function:linear;
 `
-
 const PhotoSelector = styled.div`
 display:inline-block;
 width:20%;
 height:100%;
 position:relative;
 margin-right:2%;
-background-color:#555;
+background-color:black;
 border-radius:30px;
 overflow:hidden;
 `
@@ -101,25 +124,22 @@ transform:translateX(${({ photoQueueBoxTranslateX }) => photoQueueBoxTranslateX}
 border-radius:30px;
 transition:${({ photoQueueBoxTransition }) => photoQueueBoxTransition}s;
 transition-timing-function: linear;
-cursor:pointer;
 `
 
 //用來呈現淡出效果
 const PhotoQueueFadeBlock = styled.div`
-width:8vw;
+width:100%;
 height:100%;
 position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
 background-image: linear-gradient(
     180deg,
-     rgba(200,200,200,1) 0%,
-     rgba(200,200,200,0) 10%,
-     rgba(200,200,200,0) 90%,
-     rgba(200,200,200,1) 100%
+     rgba(0,0,0,1) 0%,
+     rgba(0,0,0,0) 10%,
+     rgba(0,0,0,0) 90%,
+     rgba(0,0,0,1) 100%
      );
 pointer-events: none;
+border-radius:30px;
 `
 const Photo = styled.img`
 display:inline-block;
@@ -130,15 +150,6 @@ object-fit:contain;
 object-position:center;
 border-radius:30px;
 `
-// const Photo = styled.img`
-// display:inline-block;
-// width:78%;
-// height:100%;
-// background-color:black;
-// object-fit:contain;
-// border-radius:30px;
-// `
-
 const ArrowUp = styled(UpArrow)`
 width:2vw;
 position:absolute;
@@ -176,14 +187,10 @@ transform:translateY(-50%) scale(1,4);
 cursor:pointer;
 `
 
-
-
-
 const queueMoveTime = 0.4; //縮圖列上下移動的速度
 const photoQueueBoxMoveTime = 0.4; //縮圖列左右移動的速度
 let moveSwitch = true;
-let wheelLastTriggerTime = new Date; //滑鼠滾輪節流用變數，每次觸發scrollPhotoQueue()就會更新
-
+let wheelLastTriggerTime = new Date(); //滑鼠滾輪節流用變數，每次觸發scrollPhotoQueue()就會更新
 
 function PageShow({ pageZIndex, animationTime }) {
     const [photoQueueBoxTranslateX, setPhotoQueueBoxTranslateX] = useState(0)
@@ -210,11 +217,6 @@ function PageShow({ pageZIndex, animationTime }) {
     const setBigImgArrArr = [setBitImgMinaArr, setBitImgWolfyArr, setBitImgLunaArr];
 
     const [bigPhotoSrc, setBigPhotoSrc] = useState(bigImgMinaArr[3]);
-
-    // console.log(bigImgArrArr[photoQueueLeftImgArrIndex])
-
-
-
 
     const slideDown = () => {
         if (!moveSwitch) return;
@@ -295,49 +297,53 @@ function PageShow({ pageZIndex, animationTime }) {
     const scrollPhotoQueue = (e) => {
         let timeNow = new Date();
         //加100毫秒是為了確保移動的動畫都跑完了才觸發另一個移動動畫，這麼做就不需要再加防抖機制了
-        if ((timeNow - wheelLastTriggerTime) > photoQueueBoxMoveTime * 1000+100) { 
-                if (e.deltaY > 0) {
-                    slideDown()
-                } else if (e.deltaY < 0) {
-                    slideUp()
-                }
-                wheelLastTriggerTime = new Date();
+        if ((timeNow - wheelLastTriggerTime) > photoQueueBoxMoveTime * 1000 + 100) {
+            if (e.deltaY > 0) {
+                slideDown()
+            } else if (e.deltaY < 0) {
+                slideUp()
+            }
+            wheelLastTriggerTime = new Date();
         }
     }
 
 
     return (
         pageZIndex === 2 ? null :
-            <Container onWheel={scrollPhotoQueue}>
-                <FakeBookmark pageZIndex={pageZIndex} animationTime={animationTime}>GALLERY</FakeBookmark>
-                <SubContainer>
-                    <PhotoSelector >
-                        <PhotoQueueBox photoQueueBoxTranslateX={photoQueueBoxTranslateX} photoQueueBoxTransition={photoQueueBoxTransition}>
-                            <PhotoQueue imgArr={imgArrArr[photoQueueLeftImgArrIndex]}
-                                bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
-                                setBigPhotoSrc={setBigPhotoSrc}
-                                location="left"
-                                cssTranslateY={photoQueueTranslateY}
-                                cssTransition={photoQueueTransition}
-                            />
-                            <PhotoQueue imgArr={imgArrArr[photoQueueRightImgArrIndex]}
-                                bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
-                                setBigPhotoSrc={setBigPhotoSrc}
-                                location="right"
-                                cssTranslateY={photoQueueTranslateY}
-                                cssTransition={photoQueueTransition}
-                            />
-                        </PhotoQueueBox>
-                        <PhotoQueueFadeBlock />
-                        <ArrowUp onClick={slideUp} />
-                        <ArrowDown onClick={slideDown} />
-                        <ArrowLeft onClick={slideRight} />
-                        <ArrowRight onClick={slideLeft} />
-                    </PhotoSelector>
+            <Container onWheel={scrollPhotoQueue} pageZIndex={pageZIndex} animationTime={animationTime}>
+                <FakeBookmark>GALLERY</FakeBookmark>
+                {pageZIndex === 0 &&
+                    <WhiteBackground>
+                        <SubContainer>
+                            <PhotoSelector >
+                                <PhotoQueueBox photoQueueBoxTranslateX={photoQueueBoxTranslateX} photoQueueBoxTransition={photoQueueBoxTransition}>
+                                    <PhotoQueue imgArr={imgArrArr[photoQueueLeftImgArrIndex]}
+                                        bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
+                                        setBigPhotoSrc={setBigPhotoSrc}
+                                        location="left"
+                                        cssTranslateY={photoQueueTranslateY}
+                                        cssTransition={photoQueueTransition}
+                                    />
+                                    <PhotoQueue imgArr={imgArrArr[photoQueueRightImgArrIndex]}
+                                        bigImgArr={bigImgArrArr[photoQueueLeftImgArrIndex]}
+                                        setBigPhotoSrc={setBigPhotoSrc}
+                                        location="right"
+                                        cssTranslateY={photoQueueTranslateY}
+                                        cssTransition={photoQueueTransition}
+                                    />
+                                </PhotoQueueBox>
+                                <PhotoQueueFadeBlock id="PhotoQueueFadeBlock" />
+                                <ArrowUp onClick={slideUp} />
+                                <ArrowDown onClick={slideDown} />
+                                <ArrowLeft onClick={slideRight} />
+                                <ArrowRight onClick={slideLeft} />
+                            </PhotoSelector>
+                            <Photo src={bigPhotoSrc} />
+                        </SubContainer>
+                    </WhiteBackground>
+                }
+                <ShadowBlock pageZIndex={pageZIndex} animationTime={animationTime} />
 
-                    <Photo src={bigPhotoSrc} />
-
-                </SubContainer>
             </Container>
     )
 }

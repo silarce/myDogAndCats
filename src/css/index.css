@@ -1,17 +1,12 @@
-@font-face {
-  font-family: NotoSans;
-  src: url(./fontFamily/NotoSansTC-Regular.otf);
-  unicode-range: U+4E00-9FFF;
-}
-
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap&subset=chinese-traditional");
 * {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  font-family: NotoSans;
+  font-family: 'Noto Sans TC', sans-serif;
 }
 
 body {
-  background-color: #999;
+  background-color: black;
 }
 
 #root {

@@ -1,34 +1,25 @@
-@font-face {
-    font-family: NotoSans;
-    src: url(./fontFamily/NotoSansTC-Regular.otf);
-    unicode-range: U+4E00-9FFF;
-  }
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap&subset=chinese-traditional');
+// @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap&subset=chinese-traditional");
+
+// @font-face {
+//     font-family: NotoSans;
+//     src: url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap&subset=chinese-traditional");
+//     // src: url(./fontFamily/NotoSansTC-Regular.otf);
+//     unicode-range: U+4E00-9FFF;
+//   }
 
 * {
     box-sizing: border-box;
-    font-family: NotoSans;
+    font-family: 'Noto Sans TC', sans-serif;
+    // font-family: NotoSans;
+    
 }
 body {
-    background-color: #999;
-    // margin: 0;
-    // padding:0;
+    background-color: black;
 }
 #root {
-    // border:1px solid transparent; //用來處理margin collapse 的問題
-    // padding: 0;
-    // margin: 0;
     position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden; // 用來隱藏滾動條
 }
-
-.aaaaaaaaaaaaaaaa{
-    position:relative;
-    transition-timing-function: linear;
-    image-rendering:inherit;
-}
-
-
-
-

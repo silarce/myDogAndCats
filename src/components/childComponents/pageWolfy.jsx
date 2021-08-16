@@ -112,7 +112,6 @@ position:absolute;
 left:50%;
 transform:translateX(-50%);
 background: ${({ heroImageZIndex }) => heroImageZIndex === 1 ? "rgba( 255,255,255, 0.6 )" : "rgba( 150,150,150, 0.6 )"};
-color:${({ heroImageZIndex }) => heroImageZIndex === 1 ? "black" : "white"};
 box-shadow: 0px 0px 1vw 1vw rgba(200,200,200,0.4);
 backdrop-filter: blur( 10.0px );
 border-radius: 0px 0px 20px 20px;
@@ -121,7 +120,6 @@ text-align:center;
 display:${({ theNavCss }) => theNavCss.display};
 opacity:${({ theNavCss }) => theNavCss.opacity};
 z-index:99;
-cursor:pointer;
 overflow:hidden;
 &:hover{
     height:22vh;
@@ -132,8 +130,10 @@ const WolfyName = styled.h4`
 width:20vw;
 font-size:4.5vw;
 margin:auto;
+font-family:times new roman;
 transition:1s;
 border-radius: 0px 0px 20px 20px;
+cursor:pointer;
 &:hover{
     background: rgba( 255, 255, 255, 0.7 );
     box-shadow: 0px 0px 0.2vw 0.2vw rgba(200,200,200,0.6);

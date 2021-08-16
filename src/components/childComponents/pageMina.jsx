@@ -55,6 +55,7 @@ position:absolute;
 font-size:6vw;
 left:71%;
 top:10%;
+font-family:times new roman;
 transition:2s;
 display:${({ theNameCss }) => theNameCss.display};
 opacity:${({ theNameCss }) => theNameCss.opacity};
@@ -90,6 +91,7 @@ const Title = styled.h2`
 font-size:5vw;
 margin:0;
 text-align:center;
+font-family:times new roman;
 cursor:${({ titleCursor }) => titleCursor};
 `
 // -----------------------------------------------------

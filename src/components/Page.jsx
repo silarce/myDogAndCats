@@ -1,5 +1,4 @@
-// 為了開發方便，開發時會將一個useEffect註解掉
-// 開發結束後要調回來
+
 
 import React, { lazy, Suspense } from "react";
 import styled from "@emotion/styled";
@@ -28,12 +27,16 @@ const deployAnimation = (theName) => {
                 theName === "wolfy" ? -40 : -80}vw, 100vh);
     }
     `
-        : theName === "show" ? keyframes`
+    : theName === "show" ? keyframes`
     from{ transform:translate(-60vw,100vh); }
     to{transform:translate(-60vw,100vh);}`
-            : keyframes`
-    from{ transform:translate(-20vw,100vh); }
-    to{transform:translate(-20vw,100vh);}`
+    : keyframes`
+    from{ 
+        transform:translate(-20vw,100vh);
+     }
+    to{
+        transform:translate(-20vw,100vh);
+    }`
 }
 const undeployAnimation = keyframes`
     from{
@@ -43,6 +46,7 @@ const undeployAnimation = keyframes`
         transform:translate(0vw,0vh)
     }
     `
+// 五個page都用keyframes展開
 const Container = styled.div`
 margin:0;
 width:${({ bookmarkName }) => bookmarkName === "show" || bookmarkName === "gallery" ? 100 : 20}vw;
@@ -64,56 +68,28 @@ animation-timing-function:linear;
 const PageBookmark = styled.div`
 width:20vw;
 height:3vw;
-line-height:3vw;
-background:${({ backgroundColor }) => backgroundColor};
+background:${({ backgroundColor, bookmarkName }) =>bookmarkName==="gallery"? "white":backgroundColor};
 color:${({ backgroundColor }) => backgroundColor === "black" ? "white" : "black"};
 position:absolute;
 bottom:-3vw;
-border-radius: 0 0 50% 50%;
+font-size:3vw;
+line-height:3vw;
 text-align:center;
+font-family:times new roman;
+border-radius: 0 0 50% 50%;
+cursor: pointer;
 transition:0.5s;
 &:hover{
-    color:white;
+    color:${({bookmarkName})=>bookmarkName==="gallery"? "black":"white"} ;
     height:5vw;
     line-height:5vw;
     bottom:-5vw;
 }
-font-size:3vw;
-cursor: pointer;
 `
 
 
 
 function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundColor }) {
-    // 這幾行都用不到了，但還是暫時先留著好了
-    // const [containerWidth, setContainerWidth] = useState(100)
-    // const [containerPositionTop, setContainerPositionTop] = useState(0)
-    // const [containerPositionLeft, setContainerPositionLeft] = useState(positionX)
-    // let stateList = {
-    // containerWidth: containerWidth,
-    // containerPositionTop: containerPositionTop,
-    // containerPositionLeft: containerPositionLeft,
-    // containerZIndex: pageZIndex
-    // }
-
-    // ---------------------------------------------------------------------------------------------
-    // ---------------------------------------------------------------------------------------------
-    // 將該page反部屬，也就是回到原位
-    // 將該page反部屬，也就是回到原位
-    // 用不到了，但還是暫時先留著好了
-    // useEffect(() => {
-    //     if (pageZIndex === 2) {
-    //         setContainerWidth(20);
-    //         setContainerPositionTop(-120);
-    //         setContainerPositionLeft(positionX);
-    //         let intervalId = setInterval(() => {
-    //             setContainerPositionTop((preState) => {
-    //                 if (preState < -100) { return preState + 0.2; } else { clearInterval(intervalId); return -100 }
-    //             })
-    //         }, 1000 / 60);
-    //     }
-    // }, [pageZIndex, positionX])
-    // ---------------------------------------------------------------------------------------------
 
     return (
         <>
@@ -137,10 +113,5 @@ function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundC
     )
 
 }
-// 用不到了，但暫時先留著好了
-// onClick={() => {
-//     (pageDeploy(bookmarkName, setPageZIndex,
-//         setContainerPositionTop, setContainerWidth, setContainerPositionLeft))
-// }}
 
 export default Page;

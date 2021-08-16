@@ -36,14 +36,14 @@ animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : shadowCleanAnimat
 animation-duration:${({ animationTime }) => animationTime + 1}s;
 animation-fill-mode:forwards;
 animation-timing-function:linear;
+z-index:2;
 `
 const fakeBookmarkAnimation = keyframes`
 from{
-opacity:1
+opacity:0
 }
 to{
-opacity:0;
-display:none;
+opacity:1;
 }
 `
 const FakeBookmark = styled.div`
@@ -57,12 +57,13 @@ color:white;
 line-height:5vw;
 text-align:center;
 font-size:3vw;
+font-family:times new roman;
 border-radius: 0 0 50% 50%;
-cursor: pointer;
-animation-name:${({ pageZIndex }) => pageZIndex === 2 ? null : fakeBookmarkAnimation};
-animation-duration:${({ animationTime }) => animationTime + 1}s;
+animation-name:${({ pageZIndex }) => pageZIndex === 0 ? fakeBookmarkAnimation : null};
+animation-duration:3s;
 animation-fill-mode:forwards;
 animation-timing-function:linear;
+z-index:1;
 `
 
 let shadowShouldPlay = false;
@@ -82,11 +83,11 @@ function PageShow({ pageZIndex, animationTime }) {
     return (
         pageZIndex === 2 ? null :
             <Container>
-                {pageZIndex===0 ? <SlideShow /> : null}
+                {pageZIndex===0 ? <SlideShow style={{zIndex:1}} /> : null}
                 {shadowShouldPlay ?
                     <><ShadowBlock pageZIndex={pageZIndex} animationTime={animationTime} shadowShouldPlay={shadowShouldPlay} />
-                        <FakeBookmark pageZIndex={pageZIndex} animationTime={animationTime}>SHOW</FakeBookmark>
                     </>: null}
+                        <FakeBookmark pageZIndex={pageZIndex} animationTime={animationTime}>SHOW</FakeBookmark>
             </Container>
     )
 }
