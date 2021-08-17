@@ -3,10 +3,10 @@
     "main.css": "/myDogAndCats/static/css/main.55304403.chunk.css",
     "main.js": "/myDogAndCats/static/js/main.e3be58e5.chunk.js",
     "main.js.map": "/myDogAndCats/static/js/main.e3be58e5.chunk.js.map",
-    "runtime-main.js": "/myDogAndCats/static/js/runtime-main.46646662.js",
-    "runtime-main.js.map": "/myDogAndCats/static/js/runtime-main.46646662.js.map",
-    "static/js/2.3a641f42.chunk.js": "/myDogAndCats/static/js/2.3a641f42.chunk.js",
-    "static/js/2.3a641f42.chunk.js.map": "/myDogAndCats/static/js/2.3a641f42.chunk.js.map",
+    "runtime-main.js": "/myDogAndCats/static/js/runtime-main.f7a0c38c.js",
+    "runtime-main.js.map": "/myDogAndCats/static/js/runtime-main.f7a0c38c.js.map",
+    "static/js/2.87739806.chunk.js": "/myDogAndCats/static/js/2.87739806.chunk.js",
+    "static/js/2.87739806.chunk.js.map": "/myDogAndCats/static/js/2.87739806.chunk.js.map",
     "static/css/3.679831fc.chunk.css": "/myDogAndCats/static/css/3.679831fc.chunk.css",
     "static/js/3.73859b9e.chunk.js": "/myDogAndCats/static/js/3.73859b9e.chunk.js",
     "static/js/3.73859b9e.chunk.js.map": "/myDogAndCats/static/js/3.73859b9e.chunk.js.map",
@@ -85,7 +85,7 @@
     "static/media/showImg_9.jpg": "/myDogAndCats/static/media/showImg_9.af51cca4.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.46646662.js",
+    "static/js/runtime-main.f7a0c38c.js",
     "static/css/3.679831fc.chunk.css",
     "static/js/3.73859b9e.chunk.js",
     "static/css/main.55304403.chunk.css",
