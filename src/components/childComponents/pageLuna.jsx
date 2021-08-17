@@ -10,7 +10,9 @@ import ChildPage2 from "./lunaComponent/ChildPage2.jsx";
 import ChildPage3 from "./lunaComponent/ChildPage3.jsx";
 
 import Luna_13 from "../../img/Luna_img/heroImage/heroImage_luna.jpg";
-
+// 使heroImage的background-image用的圖片預載入
+let preloadLuna_13 = new Image()
+preloadLuna_13.src = Luna_13
 
 const Container = styled.div`
 position:relative;

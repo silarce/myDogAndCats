@@ -10,6 +10,10 @@ import ChildPage2 from "./minaComponent/ChildPage2.jsx";
 import ChildPage3 from "./minaComponent/ChildPage3.jsx";
 
 import mina_4_2 from "../../img/Mina_img/heroImage/heroImage_mina.jpg";
+// 使heroImage的background-image用的圖片預載入
+let preloadMina_4_2 = new Image()
+preloadMina_4_2.src = mina_4_2
+
 
 
 const Container = styled.div`
@@ -313,7 +317,7 @@ function PageMina({ backgroundColor, pageZIndex, animationTime }) {
 
     return (
         pageZIndex === 2 ? "" :
-            <Container onWheel={pageZIndex === 0?changePage:null}>
+            <Container onWheel={pageZIndex === 0 ? changePage : null}>
                 <HeroImage pageZIndex={pageZIndex} animationTime={animationTime}>
                     <TheName theNameCss={theNameCss}>
                         MINA

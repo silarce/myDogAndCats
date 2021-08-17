@@ -10,7 +10,9 @@ import ChildPage2 from "./wolfyComponent/ChildPage2.jsx";
 import ChildPage3 from "./wolfyComponent/ChildPage3.jsx";
 
 import wolfy_4 from "../../img/Wolfy_img/heroImage/heroImage_wolfy.jpg";
-
+// 使heroImage的background-image用的圖片預載入
+let preloadWolfy_4 = new Image()
+preloadWolfy_4.src = wolfy_4
 
 const Container = styled.div`
 position:relative;

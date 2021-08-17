@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
@@ -10,11 +10,14 @@ import { LeftArrow } from "@emotion-icons/boxicons-solid/LeftArrow";
 import { RightArrow } from "@emotion-icons/boxicons-solid/RightArrow";
 
 
-// 將指定資料夾的所有.jpg檔案全部匯入並以陣列的型式宣告為imgArr
+// 將指定資料夾的所有.jpg檔案路徑全部匯入並以陣列的型式宣告為imgArr
 function importAllImagesWithArray(theRequireContext) {
     let images = []
     const requireContext = theRequireContext;
-    requireContext.keys().map((item, index) => { images[index] = requireContext(item).default; return "" });
+    requireContext.keys().map((item, index) => {
+        images[index] = requireContext(item).default;
+        return "" //return非必要，不加的話瀏覽器會報警告所以才加
+    });
     return images;
 }
 const imgMinaArrInit = importAllImagesWithArray(require.context("img/thumbnail/mina", false, /^\.\/.*\.jpg$/))
@@ -217,6 +220,32 @@ function PageShow({ pageZIndex, animationTime }) {
     const setBigImgArrArr = [setBitImgMinaArr, setBitImgWolfyArr, setBitImgLunaArr];
 
     const [bigPhotoSrc, setBigPhotoSrc] = useState(bigImgMinaArr[3]);
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            let foo1 = []
+            let foo2 = []
+            let foo3 = []
+            for (let index in bigImgMinaArrInit) {
+                let preloadImage = new Image()
+                preloadImage.src = bigImgMinaArrInit[index]; //圖片預加載
+                foo1[index] = preloadImage.src
+            }
+            for (let index in bigImgWolfyArrInit) {
+                let preloadImage = new Image()
+                preloadImage.src = bigImgWolfyArrInit[index]; //圖片預加載
+                foo2[index] = preloadImage.src
+            }
+            for (let index in bigImgLunaArrInit) {
+                let preloadImage = new Image()
+                preloadImage.src = bigImgLunaArrInit[index]; //圖片預加載
+                foo3[index] = preloadImage.src
+            }
+        }, 500);
+    }, [])
+
+
 
     const slideDown = () => {
         if (!moveSwitch) return;

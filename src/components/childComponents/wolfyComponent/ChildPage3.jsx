@@ -147,6 +147,8 @@ function ChildPage3({ staticCss, childPageZIndex, pageZIndex }) {
     const [photoInCarouselOpacity, setPhotoInCarouselOpacity] = useState(1)
     // 部屬照片跑馬燈
     const deployPhotoCarousel = (e, elePhotoIndex) => {
+        let containerClientRect = e.target.parentNode.parentNode.parentNode.getBoundingClientRect();
+        if(containerClientRect.y!==0)return;
         let subContainerClientRect = e.target.parentNode.parentNode.getBoundingClientRect();
         photoIndex = elePhotoIndex;
         setThePhotoInCarousel(e.target.src);
