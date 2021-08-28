@@ -51,6 +51,10 @@ function App() {
       , 200)
   }
   window.addEventListener("resize", changeShowHeightAndRootClientRect)
+  // 網頁剛載入的時候root的width有偏誤，因此用useEffect再抓一次
+  useEffect(() => {
+    changeShowHeightAndRootClientRect()    
+  }, [])
 
 
   // 用來佈署page以及反佈署page

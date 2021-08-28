@@ -30,7 +30,10 @@ transform:translate(-50%,-50%);
 padding:2vw;
 border-radius:30px;
 background-color:#f9f9f9;
-@media (min-width: 1366px) {
+@media (max-width: 1900px) {
+    height:83vh;
+  }
+@media (max-width: 1366px) {
     height:85vh;
   }
 `

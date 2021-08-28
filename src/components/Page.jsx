@@ -92,6 +92,8 @@ transition:0.5s;
 
 function Page({ animationTime, bookmarkName, pageZIndex, deployPage, backgroundColor, showHeight, rootClientRect }) {
 
+    console.log(rootClientRect)
+
     return (
         <>
             <Container pageZIndex={pageZIndex} backgroundColor={backgroundColor} bookmarkName={bookmarkName}
