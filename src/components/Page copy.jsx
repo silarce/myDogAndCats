@@ -10,9 +10,6 @@ const PageWolfy = lazy(() => { return import("./childComponents/pageWolfy.jsx") 
 const PageLuna = lazy(() => { return import("./childComponents/pageLuna.jsx") })
 const PageShow = lazy(() => { return import("./childComponents/pageShow.jsx") })
 
-// 當螢幕解析度為1366px的時候，使用translate而其中的值是小數的話(30%或30vw這種值換算後有可能出現小數)
-// 會使並排的元素無法靠攏，因此不能使用40vw這樣的值
-// 因此要抓root的width乘以0.4，然後再用parseInt()確保值會是整數
 const deployAnimation = (theName,rootClientRect) => {
     return theName === "mina" || theName === "luna" || theName === "wolfy" ?
         keyframes`
@@ -27,7 +24,7 @@ const deployAnimation = (theName,rootClientRect) => {
     to{
         width:100vw;
         transform:translate(${theName === "mina" ? 0 :
-                theName === "wolfy" ? -parseInt(rootClientRect.width*0.4)+"px" : "-80vw"}, 100vh);
+                theName === "wolfy" ? -40 : -80}vw, 100vh);
     }
     `
         : theName === "show" ? keyframes`

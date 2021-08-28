@@ -49,6 +49,9 @@ margin:auto auto 7vh auto;
 background-color:#f9f9f9;
 border-radius:30px;
 padding:2vw;
+@media (min-width: 1366px) {
+    height:85vh;
+  }
 `
 const Title = styled.p`
 margin:0;

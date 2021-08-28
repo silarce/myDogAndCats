@@ -76,14 +76,14 @@ let shadowSwitch = (pageZIndex) => {
 
 
 
-function PageShow({ pageZIndex, animationTime }) {
+function PageShow({ pageZIndex, animationTime, showHeight }) {
 
     shadowSwitch(pageZIndex)
 
     return (
         pageZIndex === 2 ? null :
             <Container>
-                {pageZIndex===0 ? <SlideShow style={{zIndex:1}} /> : null}
+                {pageZIndex===0 ? <SlideShow showHeight={showHeight} style={{zIndex:1}} /> : null}
                 {shadowShouldPlay ?
                     <><ShadowBlock pageZIndex={pageZIndex} animationTime={animationTime} shadowShouldPlay={shadowShouldPlay} />
                     </>: null}
