@@ -2,7 +2,8 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
-import SlideShow from "./slideShow.jsx";
+import SlideShow from "./slideShow-2.jsx";
+// import SlideShow from "./slideShow.jsx"; // 原CSS版本，暫時停用以測試Canvas版本
 
 const Container = styled.div`
 position:relative;
