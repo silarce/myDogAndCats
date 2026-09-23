@@ -1,10 +1,28 @@
 // 照片都已經被裁減為6:4
-// 同時照片的顯示大小用CSS設定成width:120vh
-// 每一個cube width:20vh; height:20vh;
-// 每一個cube的background-postion也是用20vh為一個單位來調整
+// 版面改用固定px（可被6欄4列整除，無次像素誤差），並以1440為RWD斷點等比例縮小
+// >=1440px：容器1200x800，每一個cube 200x200
+// <1440px：容器900x600，每一個cube 150x150
+// 每一個cube的background-postion也是用cubeSize為一個單位來調整
 
 import { useState, useEffect } from "react"
 import styled from "@emotion/styled"
+
+const BREAKPOINT = 1440; // RWD斷點，單位px
+const CUBE_SIZE_LARGE = 150; // >=BREAKPOINT時使用
+const CUBE_SIZE_SMALL = 100; // <BREAKPOINT時使用，與LARGE同比例(3:4)縮小
+
+// 依視窗寬度是否跨越斷點來取得對應的cube尺寸，確保欄列格數永遠整除、無小數像素
+function useCubeSize() {
+    const getCubeSize = () => (window.innerWidth >= BREAKPOINT ? CUBE_SIZE_LARGE : CUBE_SIZE_SMALL);
+    const [cubeSize, setCubeSize] = useState(getCubeSize);
+    useEffect(() => {
+        const mql = window.matchMedia(`(min-width: ${BREAKPOINT}px)`);
+        const handleChange = () => setCubeSize(getCubeSize());
+        mql.addEventListener("change", handleChange);
+        return () => mql.removeEventListener("change", handleChange);
+    }, []);
+    return cubeSize;
+}
 
 // 將指定資料夾的所有.jpg檔案全部匯入並以陣列的型式宣告為imgArr
 function importAllImagesWithArray(theRequireContext) {
@@ -18,27 +36,29 @@ const imgArr = importAllImagesWithArray(require.context("img/index_show", false,
 // 裝ShowBox的容器
 let ShowContainer = styled.div`
 background-color: #fff;
-width:120vh;
-height: 80vh;
+width:${({ cubeSize }) => cubeSize * 6}px;
+height: ${({ cubeSize }) => cubeSize * 4}px;
 margin: 12vh auto 4vh auto;
 position: relative;
+overflow: hidden;
 `
 // 裝cube的盒子
 let ShowBox = styled.div` 
-width: 120vh;
-height: 80vh;
+width: ${({ cubeSize }) => cubeSize * 6}px;
+height: ${({ cubeSize }) => cubeSize * 4}px;
 display: grid;
 grid-template-columns: repeat(6, 1fr);
-background-size: 120vh;
+background-size: ${({ cubeSize }) => cubeSize * 6}px;
 position: absolute;
 `
 //顯示圖片用的cube
 const fadeInDuration = 5000; //淡入時間
 const fadeOutDuration = 2000; //淡出時間
 let ShowBoxCube = styled.div`
-width: 20vh;
-height: 20vh;
-background-size: 120vh;
+width: ${({ cubeSize }) => cubeSize + 1}px;
+height: ${({ cubeSize }) => cubeSize + 1}px;
+margin: 0 -1px -1px 0; /* 讓相鄰方塊微幅重疊，蓋住高DPI縮放下殘留的次像素白線 */
+background-size: ${({ cubeSize }) => cubeSize * 6}px;
 background-position:${({ position }) => position};
 opacity:${({ fade }) => fade ? 1 : 0};
 background-image:${({ backgroundImage }) => backgroundImage};
@@ -48,7 +68,7 @@ transition-property:opacity;
 `
 
 //產生24個<ShowBoxCube/>並且依照位置設定background-postion與必要的props
-function photoCube(cubeState, transitionDelayArr) {
+function photoCube(cubeState, transitionDelayArr, cubeSize) {
     let cubeArr = [];
     let i;
     let j = 6;
@@ -57,10 +77,11 @@ function photoCube(cubeState, transitionDelayArr) {
     let positionY;
     for (i = 0; i < 24; i++) {
         if (j === 0) { j = 6; k-- };
-        positionX = `${j * 20}vh`
-        positionY = `${k * 20}vh`
+        positionX = `${j * cubeSize}px`
+        positionY = `${k * cubeSize}px`
         j--
         cubeArr.push(<ShowBoxCube key={i}
+            cubeSize={cubeSize}
             position={`${positionX} ${positionY}`}
             fade={cubeState.fade}
             backgroundImage={cubeState.backgroundImage}
@@ -89,6 +110,8 @@ for (let i = 0; i < 24; i++) {
 shuffle(transitionDelayArrInit);
 
 function SlideShow() {
+    // 依RWD斷點(1440)決定cube尺寸，確保版面永遠整除、無白線
+    const cubeSize = useCubeSize();
     // cube陣列的state
     // fade為false會淡出，為true會淡入
     const [cube1State, setCube1State] = useState({ fade: false, backgroundImage: "linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 100%)" });
@@ -97,8 +120,8 @@ function SlideShow() {
     const [transitionDelayArr, setTransitionDelayArr] = useState(transitionDelayArrInit)
     
     // 生成圖片方塊，也就是cube
-    const cubeArr1 = photoCube(cube1State, transitionDelayArr); //下層
-    const cubeArr2 = photoCube(cube2State, transitionDelayArr); //上層
+    const cubeArr1 = photoCube(cube1State, transitionDelayArr, cubeSize); //下層
+    const cubeArr2 = photoCube(cube2State, transitionDelayArr, cubeSize); //上層
     // 每一次迭代的間隔時間
     // 24 * 200 + 5000 + 1000， 最後一個值可以隨意調整，最好不要為負數，不然在cube淡入完之前就會開始下一次迭代
     const iterationDelay = transitionDelayArr.length * transitionDelayUnit + fadeInDuration + 1000; 
@@ -154,11 +177,11 @@ function SlideShow() {
 
     return (
         <>
-            <ShowContainer id="ShowContainer">
-                <ShowBox id="ShowBox1"  >
+            <ShowContainer id="ShowContainer" cubeSize={cubeSize}>
+                <ShowBox id="ShowBox1" cubeSize={cubeSize} >
                     {cubeArr1}
                 </ShowBox>
-                <ShowBox id="ShowBox2">
+                <ShowBox id="ShowBox2" cubeSize={cubeSize}>
                     {cubeArr2}
                 </ShowBox>
             </ShowContainer>
